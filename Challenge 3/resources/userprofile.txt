@@ -1,0 +1,6 @@
+1. Title
+2. Major
+3. University Name
+4. Bio
+5. Experience
+6. Education
