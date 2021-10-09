@@ -41,7 +41,6 @@ def createAccount(db):
     if (isLoggedIn == 1): return (1, userName)
     else: return (0, "")
 
-
 # job search
 def job_search(db, isLoggedIn, userName):
     y = 0
@@ -76,7 +75,8 @@ def accountOptions(db, loginInfo):
     while x!=4:
         print("Account Options:")
         # if currently logged in, print the current account info
-        if(loginInfo[0] == 1): print("Currently logged in as", loginInfo[1])
+        if(loginInfo[0] == 1):
+             print("Currently logged in as", loginInfo[1])
         print(loginInfo[1])
 
         print(" 1. Log In")
@@ -154,6 +154,88 @@ def general(db, loginInfo):
             print("Under construction.")
             continue
         elif (x == 8):
+            print("Returning.")
+        else:
+            print("Please choose a valid option.")
+    return returnable
+
+#User Profile
+def updateTitle(db, username):
+    profiletitle = input("Please enter a title for your profile\n")
+    wr.insertUserTitle(db, username, profiletitle)
+
+def updateMajor(db, username):
+    major = input("Please enter a major for your profile\n")
+    new_str = io.capitalize_First_Letter_Of_Every_Word(major)
+    print(new_str)
+    wr.insertUserMajor(db, username, new_str)   
+
+def updateSchoolName(db, username):
+    schoolname = input("Please enter your school's name\n")
+    new_str = io.capitalize_First_Letter_Of_Every_Word(schoolname)
+    print(new_str)
+    wr.insertUserSchoolName(db, username, new_str)
+
+def updateBio(db, username):
+    bio = input("Please enter a bio for your profile\n")
+    wr.insertUserBio(db, username, bio)
+
+def updateExperience(db, username):
+    employer = input("Please enter employer\n")
+    startdate = input("Please enter start date\n") 
+    enddate = input("Please enter end date\n")
+    location = input("Please enter job's location\n")
+    description = input("Please enter description of your job duties\n")
+    wr.insertUserExperience(db, username, employer, startdate, enddate, location, description)
+
+def updateEducation(db, username):
+    print("Education information")
+    schoolname = input("Please enter schoolname\n")
+    degree = input("Please enter your degree\n")
+    total_years_attended = input("Please enter years attended \n")
+    wr.insertUserEducation(db, username, schoolname, degree, total_years_attended)
+
+def updateUserProfile(db, loginInfo):
+    x = 0
+    # Since general has access to accountOptions, our login status can change. We will return our login state
+    returnable = loginInfo
+    while x != 7:
+        
+        print(io.loadTextFile("userprofile"))
+        
+        option = input("Choose which section of your profile you would like to update or enter 7 to return: ")
+        try:
+            x = int(option)
+        except ValueError:
+            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+            x = -1
+            continue
+        if(x == 1):
+            # title
+            # returnable = accountOptions(db, returnable)
+            updateTitle(db, loginInfo[1])
+            continue
+        elif(x == 2):
+            # Major
+            updateMajor(db, loginInfo[1])
+            continue
+        elif(x == 3):
+            # University Name
+            updateSchoolName(db, loginInfo[1])
+            continue
+        elif (x == 4):
+            # Bio
+            updateBio(db, loginInfo[1])
+            continue
+        elif (x == 5):
+            # Experience
+            updateExperience(db, loginInfo[1])
+            continue
+        elif (x == 6):
+            # Education
+            updateEducation(db, loginInfo[1])
+            continue
+        elif (x == 7):
             print("Returning.")
         else:
             print("Please choose a valid option.")
@@ -298,7 +380,13 @@ def mainMenu(db):
         
         elif (x == 5):
             # Create User Profile
-            print(io.loadTextFile('userprofile'))
+            if isLoggedIn:
+                returned = updateUserProfile(db, (isLoggedIn, userName))
+                isLoggedIn = returned[0]
+                userName = returned[1]
+            else:
+                print("User must be logged in")
+
             continue
         
         elif (x == 6):

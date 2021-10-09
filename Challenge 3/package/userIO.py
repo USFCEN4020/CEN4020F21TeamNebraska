@@ -60,3 +60,10 @@ def postJob(db, userName):
         print("Returning to main menu.")
         return
     wr.commitJob(userName, db, title, description, employer, location, salary)
+
+def capitalize_First_Letter_Of_Every_Word(str):
+    word_list = str.split()
+    new_str =""
+    for x in word_list:
+        new_str = new_str + x.capitalize() + " "
+    return new_str

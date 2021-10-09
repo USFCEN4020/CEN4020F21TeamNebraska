@@ -26,7 +26,13 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS jobs
 cursor.execute('''CREATE TABLE IF NOT EXISTS userFunction
             (username text, email bool, sms bool, targetAD bool)''')
 cursor.execute('''CREATE TABLE IF NOT EXISTS userProfile
-            (username text, email bool, sms bool, targetAD bool)''')
+            (username text, title text, major text, schoolname text, bio text)''')
+#userExperience table will hold 3 jobs for each user in the same table. In order to view or print their jobs you will have to search by username
+cursor.execute('''CREATE TABLE IF NOT EXISTS userExperience
+            (username text, employer text, startdate text, enddate text, location text, description text)''')
+#userEducation table will hold 2 schools for each user in the same table. In order to view or print their jobs you will have to search by username
+cursor.execute('''CREATE TABLE IF NOT EXISTS userEducation
+            (username text, schoolname text, degree text, years_attended text)''')
 
 
 menu.mainMenu(db)
