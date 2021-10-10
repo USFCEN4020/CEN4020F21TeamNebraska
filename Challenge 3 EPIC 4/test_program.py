@@ -35,6 +35,8 @@ from package import userIO
 # Database must be empty in order for these following test to work #
 ####################################################################
 
+test_user = "Josh_123"
+
 def test_validateUsername():
     
     dbWrite.insertUser(db, 'Josh_123', 'Bananaboat88!', 'Josh', 'Stenson', 1) #adding first user to database for test
@@ -144,3 +146,27 @@ def test_privacy():
     assert dbRead.currentPrivacy(db, "James_88")[1] == 1 #on
     assert dbRead.currentPrivacy(db, "James_88")[2] == 1 #on
     assert dbRead.currentPrivacy(db, "James_88")[3] == 1 #on
+
+# Testing the user profile creation
+def test_profile():
+    #update current profile
+    dbWrite.insertUserTitle(db, test_user, "Title Test")
+    dbWrite.insertUserBio(db, test_user, "Bio Test")
+    dbWrite.insertUserEducation(db, test_user, "Test University", "Test Degree", "Test Years", 0)
+    dbWrite.insertUserExperience(db, test_user, "Test Employer", "Test Start", "Test End", "Test Location", "Test Description", 0)
+    dbWrite.insertUserSchoolName(db, test_user, "Test University")
+    dbWrite.insertUserMajor(db, test_user, "Test Major")
+
+    userProfile = dbRead.getUserProfile(db, test_user)
+
+    #test grabbing a DNE profile
+    assert dbRead.getUserProfile(db, "sdarnold") is None
+
+    #test grabbing an incomplete profile
+    assert userProfile[-1] is None
+    #finish profile
+    dbWrite.insertUserMajor(db, test_user, "Test Major")
+
+    #test grabbing the complete profile
+    userProfile = dbRead.getUserProfile(db, test_user)
+    assert userProfile[-1] is not None
