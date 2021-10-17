@@ -11,16 +11,64 @@ languageDict = {1: 'English',
                 }
 
 
-def connectFriend(db, isLoggedIn):
-    fName = input('Enter first name of the friend you wish to connect with: ')
-    lName = input('Enter last name of the friend you wish to connect with: ')
+def connectFriend(db, isLoggedIn, username):
     if not isLoggedIn:
-        if (rd.find_people(db, fName, lName)):
-            print('They are a part of the InCollege system. Please login or sign up to connect with them.')
-        else:
-            print('They are NOT a part of the InCollege system.')
+        print('Please login or sign up to connect with friends.')
     else:
-        print("Under Construction!")
+        choice = input("Enter 1 to serach by last name, 2 to search by university, 3 to search by major: ")
+        while (choice < 1 or choice > 3):
+            choice = input("Enter 1 to serach by last name, 2 to search by university, 3 to search by major: ")
+        
+        # searching and adding user by last name
+        if choice == 1:
+            lname = input("Enter the user's lname: ")
+            users = rd.searchByLname(db, lname)
+
+            if len(users) == 0:
+                print("No user with last name {} was found".format(lname))
+            else:
+                for x in range(0, len(users)):
+                    print("{}. {}".format(x+1, users[x]))
+
+            select = input("select the number coresponding with the user you want to add: ")
+            response = wr.sendFriendRequest(db, username, users[select - 1])
+
+            print(response)
+            return
+
+        # searching and adding user by university
+        elif choice == 2:
+            university = input("Enter the user's university: ")
+            users = rd.searchByUniversity(db, university)
+
+            if len(users) == 0:
+                print("No user in {} was found".format(university))
+            else:
+                for x in range(0, len(users)):
+                    print("{}. {}".format(x+1, users[x]))
+
+            select = input("select the number coresponding with the user you want to add: ")
+            response = wr.sendFriendRequest(db, username, users[select - 1])
+
+            print(response)
+            return
+
+        # searching and adding user by major
+        elif choice == 3:
+            major = input("Enter the user's major: ")
+            users = rd.searchByMajor(db, major)
+
+            if len(users) == 0:
+                print("No user with major {} was found".format(major))
+            else:
+                for x in range(0, len(users)):
+                    print("{}. {}".format(x+1, users[x]))
+
+            select = input("select the number coresponding with the user you want to add: ")
+            response = wr.sendFriendRequest(db, username, users[select - 1])
+
+            print(response)
+            return
 
 
 def logIn(db):
@@ -493,6 +541,10 @@ def mainMenu(db):
         print()
 
         if isLoggedIn:
+            # getting the list of pending requests
+            print("Checking to see if you have any new friend requests!")
+            wr.pendingRequest(db, userName)
+            
             currentLan = rd.currentLanguage(db, userName)
             if currentLan not in languageDict:
                 currentLan = 1

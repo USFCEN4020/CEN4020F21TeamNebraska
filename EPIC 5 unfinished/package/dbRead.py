@@ -81,3 +81,26 @@ def getUserProfile(db, username):
                     profile.append(None)
                     return profile
     return profile
+
+def searchByLname(db, Lname):
+    users = []
+    db[0].execute('SELECT username FROM users WHERE lname=?', (Lname,))
+    users.append(db[0].fetchall())
+    
+    return users
+
+
+def searchByUniversity(db, university):
+    users = []
+    db[0].execute('SELECT username FROM userEducation WHERE schoolname=?', (university,))
+    users.append(db[0].fetchall())
+    
+    return users
+
+
+def searchByMajor(db, major):
+    users = []
+    db[0].execute('SELECT username FROM userProfile WHERE major=?', (major,))
+    users.append(db[0].fetchall())
+    
+    return users

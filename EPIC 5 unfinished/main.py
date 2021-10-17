@@ -33,6 +33,9 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS userExperience
 #userEducation table will hold 2 schools for each user in the same table. In order to view or print their jobs you will have to search by username
 cursor.execute('''CREATE TABLE IF NOT EXISTS userEducation
             (username text, schoolname text, degree text, years_attended text, counts text)''')
+#friends
+cursor.execute('''CREATE TABLE IF NOT EXISTS userFriends
+            (username text, friends text, pending text)''')
 
 
 menu.mainMenu(db)
