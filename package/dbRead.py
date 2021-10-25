@@ -45,21 +45,6 @@ def nameToUserName(db, fName, lName):
         return None
     else:
         return check[0]
-def getFirstName(db, username):
-    db[0].execute('SELECT fname FROM users WHERE username=?', (username,))
-    check = db[0].fetchone()
-    if check is None:
-        return None
-    else:
-        return check[0]
-def getLastName(db, username):
-    db[0].execute('SELECT lname FROM users WHERE username=?', (username,))
-    check = db[0].fetchone()
-    if check is None:
-        return None
-    else:
-        return check[0]
-
 
 # get a users selected language
 def currentLanguage(db, username):
@@ -94,4 +79,3 @@ def getUserProfile(db, username):
                     profile.append(None)
                     return profile
     return profile
-
