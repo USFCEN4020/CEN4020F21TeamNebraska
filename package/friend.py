@@ -1,5 +1,3 @@
-from package import dbRead as rd
-
 # searches usernames from users table based on last name
 def searchByLname(db, Lname):
     users = []
@@ -91,8 +89,7 @@ def connectFriend(db, isLoggedIn, username):
     if not isLoggedIn:
         print('Please login or sign up to connect with friends.')
     else:
-        choice = input("Enter 1 to search users by last name, 2 to search users by university, 3 to search users by major: ")
-        choice = int(choice)
+        choice = input("Enter 1 to serach users by last name, 2 to search users by university, 3 to search users by major: ")
         while (choice < 1 or choice > 3):
             choice = input("Enter 1 to serach by last name, 2 to search by university, 3 to search by major: ")
         
@@ -106,12 +103,9 @@ def connectFriend(db, isLoggedIn, username):
             else:
                 for x in range(0, len(users)):
                     print("{}. {}".format(x+1, users[x][0]))
-            
-            user_choice_to_send_request = input("Would you like to send someone from this list a friend request? Y/y to accept or anything else to deny.")
-            if user_choice_to_send_request == 'Y' or user_choice_to_send_request == 'y':
-                select = input("Select the number coresponding with the user you want to add: ")
-                select = int(select)
-                sendFriendRequest(db, username, users[select - 1][0])
+
+            select = input("select the number coresponding with the user you want to add: ")
+            sendFriendRequest(db, username, users[select - 1][0])
 
             return
 
@@ -126,11 +120,8 @@ def connectFriend(db, isLoggedIn, username):
                 for x in range(0, len(users)):
                     print("{}. {}".format(x+1, users[x][0]))
 
-            user_choice_to_send_request = input("Would you like to send someone from this list a friend request? Y/y to accept or anything else to deny.")
-            if user_choice_to_send_request == 'Y' or user_choice_to_send_request == 'y':
-                select = input("Select the number coresponding with the user you want to add: ")
-                select = int(select)
-                sendFriendRequest(db, username, users[select - 1][0])
+            select = input("select the number coresponding with the user you want to add: ")
+            sendFriendRequest(db, username, users[select - 1][0])
 
             return
 
@@ -144,18 +135,15 @@ def connectFriend(db, isLoggedIn, username):
             else:
                 for x in range(0, len(users)):
                     print("{}. {}".format(x+1, users[x][0]))
-            user_choice_to_send_request = input("Would you like to send someone from this list a friend request? Y/y to accept or anything else to deny.")
-            if user_choice_to_send_request == 'Y' or user_choice_to_send_request == 'y':
-                select = input("Select the number coresponding with the user you want to add: ")
-                select = int(select)
-                sendFriendRequest(db, username, users[select - 1][0])
+
+            select = input("select the number coresponding with the user you want to add: ")
+            sendFriendRequest(db, username, users[select - 1][0])
 
             return
 
 
 # "Show my Network"
 def myFriends(db, username):
-    
     friends = []
 
     # getting all the friends of user
@@ -164,20 +152,13 @@ def myFriends(db, username):
 
     # connected with no friends
     if (len(friends[0]) == 0):
-        print("\nYou have not connected with anyone yet!")
-        return 2
+        print("\nYou are connected with no yet!")
+        return
 
     # printing all the connections
     print("\nYou have connected with:")
     for x in friends[0]:
-        userprofile = rd.getUserProfile(db, username)
-        if userprofile is None:
-            print(x[0])
-        elif userprofile[-1] is None:
-            print(x[0])
-        else:
-            print ( x[0] + "(Profile)")
-            
+        print(x[0])
     print("")
 
 # "disconnect from someone"
@@ -191,58 +172,3 @@ def deleteFriend(db, username, friend):
     db[1].commit()
 
     print("You two are no longer connected")
-
-
-def viewProfile(db, username):
-    firstname = rd.getFirstName(db, username)
-    lastname = rd.getLastName(db, username)
-    if username is None:
-        print(f"User {firstname} {lastname} is not exist")
-        input("Please press enter to continue ")
-        return
-    userprofile = rd.getUserProfile(db, username)
-    if userprofile is None:
-        print(f"User {firstname} {lastname}'s profile is not registered")
-    elif userprofile[-1] is None:
-        print(f"User {firstname} {lastname}'s profile is not completed")
-    else:
-        print(f"User {firstname} {lastname}'s profile:")
-        dataname = [['username', 'title', 'major', 'schoolname', 'bio'],
-                    ['Work Experience', 'employer', 'startdate', 'enddate', 'location', 'description'],
-                    ['Education Experience', 'schoolname', 'degree', 'years_attended']]
-        for index, each in enumerate(userprofile):
-            print()
-            for index_2, profile in enumerate(each):
-                if index != 0:
-                    print()
-                    print(f"User {dataname[index][0]} {index_2 + 1}:")
-                    for index_3, entry in enumerate(profile):
-                        if index_3 != 0 and index_3 != len(profile) -1:
-                            print(f"{dataname[index][index_3]}: {entry}")
-                else:
-                    print(f"{dataname[index][index_2]}: {profile}")
-        
-    input('Press Enter to continue')
-
-# "Show my Network"
-def myFriends(db, username):
-    
-    friends = []
-
-    # getting all the friends of user
-    db[0].execute('SELECT friend FROM userFriends WHERE username=?', (username,))
-    friends.append(db[0].fetchall())
-
-    # connected with no friends
-    if (len(friends[0]) == 0):
-        print("\nYou have not connected with anyone yet!")
-        return 2
-
-    # printing all the connections
-    print("\nYou have connected with:")
-    for x in friends[0]:
-        print (x[0])
-        
-            
-    print("")
-

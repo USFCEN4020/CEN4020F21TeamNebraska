@@ -5,7 +5,6 @@ from package import dbRead
 from package import dbWrite
 from package import menu
 from package import userIO
-from package import job
 
 # deleting the database file
 os.remove("inCollegetest.db")
@@ -77,6 +76,14 @@ def test_loginUser():
     assert dbRead.loginUser(db, "Neo", "Neo1234!") == False #Invalid user for log-in
 
 
+def test_commitJob():
+    assert dbWrite.commitJob("James_88", db, "Server", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 1
+    assert dbWrite.commitJob("James_88", db, "Bartneder", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 2
+    assert dbWrite.commitJob("James_88", db, "Busser", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 3
+    assert dbWrite.commitJob("James_88", db, "Host", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 4
+    assert dbWrite.commitJob("James_88", db, "Cook", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 5
+
+    assert dbWrite.commitJob("James_88", db, "Manager", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == 1 #Job 6 //Not allowed
 
 
 # Testing the find_people function
@@ -95,8 +102,27 @@ def test_learnSkill():
     assert menu.learn_skills() == "Marketing\nSales\nEngineering\nWeb Design\nNursing"
 
 
+# Testing the job_search function
+def test_jobSearch():
+    # using the job serach while not logged in
+    assert menu.job_search(db, 0, "James_88") == None 
+
+    ### Not really sure how to test this as it is not returning anything
 
 
+# Testing the Langauges functions
+def test_language():
+    #testing the language function in menu
+    assert menu.language(db, (0, "James_88")) == None #user is not logged in so it returns nothing
+
+    #switching languages and testing if they were switched or not
+    #english
+    dbWrite.changeLanguage(db, "James_88", 1) #changing language to english
+    assert dbRead.currentLanguage(db, "James_88") == 1 #check passed
+
+    #spanish
+    dbWrite.changeLanguage(db, "James_88", 2) #changing language to spanish
+    assert dbRead.currentLanguage(db, "James_88") == 2 #check passed
 
 
 # Testing the Privacy functions
@@ -121,35 +147,6 @@ def test_privacy():
     assert dbRead.currentPrivacy(db, "James_88")[2] == 1 #on
     assert dbRead.currentPrivacy(db, "James_88")[3] == 1 #on
 
-def test_commitJob():
-    assert job.commitJob("James_88", db, "Server", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 1
-    assert job.commitJob("James_88", db, "Bartneder", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 2
-    assert job.commitJob("James_88", db, "Busser", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 3
-    assert job.commitJob("James_88", db, "Host", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 4
-    assert job.commitJob("James_88", db, "Cook", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 5
-
-    assert job.commitJob("James_88", db, "Manager", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == 1 #Job 6 //Not allowed
-
-# Testing the job_search function
-def test_jobSearch():
-    # using the job serach while not logged in
-    assert job.jobSearch(db, 0, "James_88") == None 
-
-    ### Not really sure how to test this as it is not returning anything
-
-# Testing the Langauges functions
-def test_language():
-    #testing the language function in menu
-    assert menu.language(db, (0, "James_88")) == None #user is not logged in so it returns nothing
-
-    #switching languages and testing if they were switched or not
-    #english
-    dbWrite.changeLanguage(db, "James_88", 1) #changing language to english
-    assert dbRead.currentLanguage(db, "James_88") == 1 #check passed
-
-    #spanish
-    dbWrite.changeLanguage(db, "James_88", 2) #changing language to spanish
-    assert dbRead.currentLanguage(db, "James_88") == 2 #check passed
 # Testing the user profile creation
 def test_profile():
     #update current profile
