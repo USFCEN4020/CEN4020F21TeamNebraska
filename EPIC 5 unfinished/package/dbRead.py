@@ -1,6 +1,4 @@
-import sqlite3
-
-
+# logs a user in
 def loginUser(db, username, password):
     # fetch user
     db[0].execute('SELECT username, password FROM users WHERE username=? AND password=?', (username, password))
@@ -13,8 +11,8 @@ def loginUser(db, username, password):
         # 0 => false on failure
         return 0
 
-
-def validateUser(db, username):  # username is the Account Name
+# username is the Account Name
+def validateUser(db, username): 
     valid = True
     count = 0
     t = (username,)
@@ -30,7 +28,6 @@ def validateUser(db, username):  # username is the Account Name
 
     return valid
 
-
 # find people by firstName and lastName
 def find_people(db, fName, lName):
     db[0].execute('SELECT * FROM users WHERE fname=? AND lname=?', (fName, lName))
@@ -40,6 +37,7 @@ def find_people(db, fName, lName):
     else:
         return 1
 
+# finds username based on first and last name fron users table
 def nameToUserName(db, fName, lName):
     db[0].execute('SELECT * FROM users WHERE fname=? AND lname=?', (fName, lName))
     check = db[0].fetchone()
@@ -47,20 +45,35 @@ def nameToUserName(db, fName, lName):
         return None
     else:
         return check[0]
+def getFirstName(db, username):
+    db[0].execute('SELECT fname FROM users WHERE username=?', (username,))
+    check = db[0].fetchone()
+    if check is None:
+        return None
+    else:
+        return check[0]
+def getLastName(db, username):
+    db[0].execute('SELECT lname FROM users WHERE username=?', (username,))
+    check = db[0].fetchone()
+    if check is None:
+        return None
+    else:
+        return check[0]
 
 
+# get a users selected language
 def currentLanguage(db, username):
     db[0].execute('SELECT lan FROM users WHERE username=?', (username,))
     lan = db[0].fetchone()
     return int(lan[0])
 
-
+# gets a users selected privacy option
 def currentPrivacy(db, username):
     db[0].execute('SELECT * FROM userFunction WHERE username=?', (username,))
     privacy = db[0].fetchone()
     return privacy
 
-
+# gets a users profile based on thier username
 def getUserProfile(db, username):
     profile = []
     db[0].execute('SELECT * FROM userProfile WHERE username=?', (username,))
@@ -82,25 +95,3 @@ def getUserProfile(db, username):
                     return profile
     return profile
 
-def searchByLname(db, Lname):
-    users = []
-    db[0].execute('SELECT username FROM users WHERE lname=?', (Lname,))
-    users.append(db[0].fetchall())
-    
-    return users
-
-
-def searchByUniversity(db, university):
-    users = []
-    db[0].execute('SELECT username FROM userEducation WHERE schoolname=?', (university,))
-    users.append(db[0].fetchall())
-    
-    return users
-
-
-def searchByMajor(db, major):
-    users = []
-    db[0].execute('SELECT username FROM userProfile WHERE major=?', (major,))
-    users.append(db[0].fetchall())
-    
-    return users
