@@ -1,0 +1,17 @@
+*   a5fe0dc (origin/main, origin/HEAD) Merge pull request #1 from USFCEN4020/epic6
+|\  
+| * 898ade8 (origin/epic6, epic6) History file as stated in instructions.
+| * 99e3375 EPIC 6 Changes
+|/  
+* cb5c4b4 (HEAD -> main) epic 5
+* 54e449e Delete EPIC 5 unfinished directory
+* b0fd5c1 Add files via upload
+* 9b61e51 Delete CEN4020F21TeamNebraska/EPIC 5 unfinished directory
+* 74e942e Add files via upload
+* df43184 (origin/epic-5) Finished Epic 4
+* 434fa29 Epic 4
+* fadef4d more functionality was added
+* cd8557b Init commit for challenge 3
+* 8e6886c Delete main (1).py
+* e0eb21b Add files via upload
+* a97062d Add files via upload
