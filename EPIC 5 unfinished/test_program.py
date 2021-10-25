@@ -1,17 +1,18 @@
-#Team Nebraska
-#Epic 3
-
-# Database used
 import sqlite3
+import os
 
-# Connection object represents
-# the database
-conn = sqlite3.connect('inCollege1.db')
+from package import dbRead
+from package import dbWrite
+from package import menu
+from package import userIO
+from package import job
 
-# Cursor object to perform
-# SQL commands
+# deleting the database file
+os.remove("inCollegetest.db")
+
+# creating the database
+conn = sqlite3.connect('inCollegetest.db')
 cursor = conn.cursor()
-
 db = (cursor, conn)
 
 # Create user table
@@ -21,22 +22,19 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS jobs
             (username text, title text, description text, employer text, location text, salary text)''')
 cursor.execute('''CREATE TABLE IF NOT EXISTS userFunction
             (username text, email bool, sms bool, targetAD bool)''')
+cursor.execute('''CREATE TABLE IF NOT EXISTS userProfile
+            (username text, title text, major text, schoolname text, bio text)''')
+cursor.execute('''CREATE TABLE IF NOT EXISTS userExperience
+            (username text, employer text, startdate text, enddate text, location text, description text, counts text)''')
+cursor.execute('''CREATE TABLE IF NOT EXISTS userEducation
+            (username text, schoolname text, degree text, years_attended text, counts text)''')
+cursor.execute('''CREATE TABLE IF NOT EXISTS userFriends
+            (username text, friend text)''')
+cursor.execute('''CREATE TABLE IF NOT EXISTS friendRequests
+            (username text, request text)''')
 
-# Unit testing for program using pytest
-
-from package import dbRead
-from package import dbWrite
-from package import menu
-from package import userIO
-
-# First we need to create users, then see if they exist in the databse or not
-
-####################################################################
-# Database must be empty in order for these following test to work #
-####################################################################
 
 test_user = "Josh_123"
-
 def test_validateUsername():
     
     dbWrite.insertUser(db, 'Josh_123', 'Bananaboat88!', 'Josh', 'Stenson', 1) #adding first user to database for test
@@ -62,9 +60,12 @@ def test_insertUser():
     assert dbWrite.insertUser(db, "James_88", "James123!", "James", "Bryant", 1) == True #adding third user to database for test
     assert dbWrite.insertUser(db, 'Billy_The_Goat','Billy123!','Billy', 'Baaa', 1) == True #adding fourth user to database for test
     assert dbWrite.insertUser(db, 'All_Mighty_Jesus','Jesus123!', 'Jesus', 'Ramirez', 1) == True #adding fifth user to database for test
-    assert dbWrite.insertUser(db, 'Trent.exe','Trent123!','Trent', 'Howard', 1) == False #attempting to add a sixth user to database for test
-    assert dbWrite.insertUser(db, 'Trent.exe','Trent123!','Trent', 'Howard', 1) == False #attempting to add a sixth user to database for test
-#def Test_findpeople(fName, lName):
+    assert dbWrite.insertUser(db, 'Trent.exe','Trent123!','Trent', 'Howard', 1) == True #6th
+    assert dbWrite.insertUser(db, 'Undertaker','Sckyler123!','lamb', 'password', 1) == True #7th
+    assert dbWrite.insertUser(db, 'Parxi','Ready123!','Xhristophin', 'one', 1) == True #8th
+    assert dbWrite.insertUser(db, 'darthmartain','Starwars123!','Nickoly', 'micky', 1) == True #9th
+    assert dbWrite.insertUser(db, 'KnightNinja','Knsd123!','Knight', 'Ninja', 1) == True #10th
+    assert dbWrite.insertUser(db, 'Trent.exe','Trent123!','Trent', 'Howard', 1) == False #attempting to add a 11th user to database for test
     
     
 def test_loginUser():
@@ -76,14 +77,6 @@ def test_loginUser():
     assert dbRead.loginUser(db, "Neo", "Neo1234!") == False #Invalid user for log-in
 
 
-def test_commitJob():
-    assert dbWrite.commitJob("James_88", db, "Server", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 1
-    assert dbWrite.commitJob("James_88", db, "Bartneder", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 2
-    assert dbWrite.commitJob("James_88", db, "Busser", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 3
-    assert dbWrite.commitJob("James_88", db, "Host", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 4
-    assert dbWrite.commitJob("James_88", db, "Cook", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 5
-
-    assert dbWrite.commitJob("James_88", db, "Manager", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == 1 #Job 6 //Not allowed
 
 
 # Testing the find_people function
@@ -102,27 +95,8 @@ def test_learnSkill():
     assert menu.learn_skills() == "Marketing\nSales\nEngineering\nWeb Design\nNursing"
 
 
-# Testing the job_search function
-def test_jobSearch():
-    # using the job serach while not logged in
-    assert menu.job_search(db, 0, "James_88") == None 
-
-    ### Not really sure how to test this as it is not returning anything
 
 
-# Testing the Langauges functions
-def test_language():
-    #testing the language function in menu
-    assert menu.language(db, (0, "James_88")) == None #user is not logged in so it returns nothing
-
-    #switching languages and testing if they were switched or not
-    #english
-    dbWrite.changeLanguage(db, "James_88", 1) #changing language to english
-    assert dbRead.currentLanguage(db, "James_88") == 1 #check passed
-
-    #spanish
-    dbWrite.changeLanguage(db, "James_88", 2) #changing language to spanish
-    assert dbRead.currentLanguage(db, "James_88") == 2 #check passed
 
 
 # Testing the Privacy functions
@@ -147,6 +121,35 @@ def test_privacy():
     assert dbRead.currentPrivacy(db, "James_88")[2] == 1 #on
     assert dbRead.currentPrivacy(db, "James_88")[3] == 1 #on
 
+def test_commitJob():
+    assert job.commitJob("James_88", db, "Server", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 1
+    assert job.commitJob("James_88", db, "Bartneder", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 2
+    assert job.commitJob("James_88", db, "Busser", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 3
+    assert job.commitJob("James_88", db, "Host", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 4
+    assert job.commitJob("James_88", db, "Cook", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == None #Job 5
+
+    assert job.commitJob("James_88", db, "Manager", "Hospitality", "Miller's Ale House", "Tampa", "$500 per Week") == 1 #Job 6 //Not allowed
+
+# Testing the job_search function
+def test_jobSearch():
+    # using the job serach while not logged in
+    assert job.jobSearch(db, 0, "James_88") == None 
+
+    ### Not really sure how to test this as it is not returning anything
+
+# Testing the Langauges functions
+def test_language():
+    #testing the language function in menu
+    assert menu.language(db, (0, "James_88")) == None #user is not logged in so it returns nothing
+
+    #switching languages and testing if they were switched or not
+    #english
+    dbWrite.changeLanguage(db, "James_88", 1) #changing language to english
+    assert dbRead.currentLanguage(db, "James_88") == 1 #check passed
+
+    #spanish
+    dbWrite.changeLanguage(db, "James_88", 2) #changing language to spanish
+    assert dbRead.currentLanguage(db, "James_88") == 2 #check passed
 # Testing the user profile creation
 def test_profile():
     #update current profile
