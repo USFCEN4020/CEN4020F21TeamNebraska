@@ -1,9 +1,18 @@
-*   a5fe0dc (origin/main, origin/HEAD) Merge pull request #1 from USFCEN4020/epic6
-|\  
-| * 898ade8 (origin/epic6, epic6) History file as stated in instructions.
-| * 99e3375 EPIC 6 Changes
+* 3f60750 (origin/epic6, epic6) Epic6 Latest Changes
+| * 15339c9 (HEAD -> main, origin/main, origin/HEAD) Clean Up
+| *   6fdac53 Merge branch 'main' of https://github.com/USFCEN4020/CEN4020F21TeamNebraska into main
+| |\  
+| | *   a5fe0dc Merge pull request #1 from USFCEN4020/epic6
+| | |\  
+| |_|/  
+|/| |   
+* | | 898ade8 History file as stated in instructions.
+* | | 99e3375 EPIC 6 Changes
+| |/  
+|/|   
+| * 5c9cd34 History file with graph.
 |/  
-* cb5c4b4 (HEAD -> main) epic 5
+* cb5c4b4 epic 5
 * 54e449e Delete EPIC 5 unfinished directory
 * b0fd5c1 Add files via upload
 * 9b61e51 Delete CEN4020F21TeamNebraska/EPIC 5 unfinished directory
