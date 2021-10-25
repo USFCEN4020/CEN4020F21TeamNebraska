@@ -1,74 +1,16 @@
-import sqlite3
 from package import dbRead as rd
 from package import dbWrite as wr
 from package import userIO as io
+from package import friend as fd
+from package.job import postJob
 
-mainTerm = 16
+
+mainTerm = 19 #modified by weiqian, exit the menu
 isLoggedIn = 0
 currentLan = 1
 languageDict = {1: 'English',
                 2: 'Spanish'
                 }
-
-
-def connectFriend(db, isLoggedIn, username):
-    if not isLoggedIn:
-        print('Please login or sign up to connect with friends.')
-    else:
-        choice = input("Enter 1 to serach by last name, 2 to search by university, 3 to search by major: ")
-        while (choice < 1 or choice > 3):
-            choice = input("Enter 1 to serach by last name, 2 to search by university, 3 to search by major: ")
-        
-        # searching and adding user by last name
-        if choice == 1:
-            lname = input("Enter the user's lname: ")
-            users = rd.searchByLname(db, lname)
-
-            if len(users) == 0:
-                print("No user with last name {} was found".format(lname))
-            else:
-                for x in range(0, len(users)):
-                    print("{}. {}".format(x+1, users[x]))
-
-            select = input("select the number coresponding with the user you want to add: ")
-            response = wr.sendFriendRequest(db, username, users[select - 1])
-
-            print(response)
-            return
-
-        # searching and adding user by university
-        elif choice == 2:
-            university = input("Enter the user's university: ")
-            users = rd.searchByUniversity(db, university)
-
-            if len(users) == 0:
-                print("No user in {} was found".format(university))
-            else:
-                for x in range(0, len(users)):
-                    print("{}. {}".format(x+1, users[x]))
-
-            select = input("select the number coresponding with the user you want to add: ")
-            response = wr.sendFriendRequest(db, username, users[select - 1])
-
-            print(response)
-            return
-
-        # searching and adding user by major
-        elif choice == 3:
-            major = input("Enter the user's major: ")
-            users = rd.searchByMajor(db, major)
-
-            if len(users) == 0:
-                print("No user with major {} was found".format(major))
-            else:
-                for x in range(0, len(users)):
-                    print("{}. {}".format(x+1, users[x]))
-
-            select = input("select the number coresponding with the user you want to add: ")
-            response = wr.sendFriendRequest(db, username, users[select - 1])
-
-            print(response)
-            return
 
 
 def logIn(db):
@@ -92,28 +34,6 @@ def createAccount(db):
         return (1, userName)
     else:
         return (0, "")
-
-
-# job search
-def job_search(db, isLoggedIn, userName):
-    y = 0
-    if (isLoggedIn == 0):
-        print("Please log in to access job search and posting.")
-        input("Press enter to return to the main menu.")
-        return
-    else:
-        while (y != 5):
-            print("\nWelcome to the jobs tab!\n")
-            print("1. Post job")
-            command = input("Choose an available option, or enter 5 to exit.")
-            y = int(command)
-            if (y == 1):
-                io.postJob(db, userName)
-                print()
-            else:
-                return
-
-    return
 
 
 # learn skills
@@ -173,7 +93,7 @@ def general(db, loginInfo):
     # Since general has access to accountOptions, our login status can change. We will return our login state
     returnable = loginInfo
     while x != 8:
-        print(io.loadTextFile("general"))
+        print(io.loadTextFile("General"))
         option = input("Choose from available options or enter 8 to return: ")
         try:
             x = int(option)
@@ -380,6 +300,30 @@ def updateEducation(db, username):
 
     wr.insertUserEducation(db, username, entries[counts - 1][1], entries[counts - 1][2], entries[counts - 1][3])
 
+def job(db, loginInfo):
+    x = 0
+    # Since general has access to accountOptions, our login status can change. We will return our login state
+    returnable = loginInfo
+    while x != 2:
+
+        print(io.loadTextFile("job"))
+
+        option = input("Choose following option or enter 2 to return: ")
+        try:
+            x = int(option)
+        except ValueError:
+            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+            x = -1
+            continue
+        if (x == 1):
+            #postJob
+            postJob(db, loginInfo[1])
+            continue 
+        elif (x == 2):
+            print("Returning.")
+        else:
+            print("Please choose a valid option.")
+    return returnable
 
 def updateUserProfile(db, loginInfo):
     x = 0
@@ -387,7 +331,7 @@ def updateUserProfile(db, loginInfo):
     returnable = loginInfo
     while x != 7:
 
-        print(io.loadTextFile("userprofile"))
+        print(io.loadTextFile("UserProfile"))
 
         option = input("Choose which section of your profile you would like to update or enter 7 to return: ")
         try:
@@ -462,6 +406,7 @@ def searchProfile(db):
                                 print(f"{dataname[index][index_3]}: {entry}")
                     else:
                         print(f"{dataname[index][index_2]}: {profile}")
+            
         input('Press Enter to continue')
 
 
@@ -543,7 +488,7 @@ def mainMenu(db):
         if isLoggedIn:
             # getting the list of pending requests
             print("Checking to see if you have any new friend requests!")
-            wr.pendingRequest(db, userName)
+            fd.pendingRequests(db, userName)
             
             currentLan = rd.currentLanguage(db, userName)
             if currentLan not in languageDict:
@@ -556,13 +501,13 @@ def mainMenu(db):
             print(f"Current language is {languageDict[currentLan]}")
             print('0. Watch video about inCollege')
             print()
-            print(io.loadTextFile("mainmenu"))
+            print(io.loadTextFile("MainMenu"))
 
         else:
             print('----- Currently logged in as', userName, '-----')
             print(f"Current language is {languageDict[currentLan]}")
             print()
-            print(io.loadTextFile("mainmenu"))
+            print(io.loadTextFile("MainMenu"))
 
         option = input("Choose from available options: ")
         print()
@@ -617,53 +562,104 @@ def mainMenu(db):
 
         elif (x == 6):
             # A Copyright Notice
-            searchProfile(db)
+            fd.connectFriend(db, isLoggedIn, userName)
             continue
 
         elif (x == 7):
+            # friends
+            if (not(isLoggedIn)):
+                print("You must be logged in to use show my network")
+                continue
+            no_friends = fd.myFriends(db, userName)
+            if (no_friends == 2):
+                continue
+            else:
+                choice = input("If you would like to view a friends profile input 1, and if you would like to disconnect from someone input 2: ")
+                choice = int(choice)
+                if (choice == 1):
+                    toView = input("Enter the username of the user profile you would like to view: ")
+                    fd.viewProfile(db, toView)
+                   
+                elif (choice == 2):
+                    toDelete = input("Enter the username of the user you want to disconnect with: ")
+                    fd.deleteFriend(db, userName, toDelete)
+                else:
+                    print("\ninvalid input, Returning")
+                    continue
+
+        elif (x == 8):
+            # copyright notice
+            continue
+
+        elif (x == 9):
             # About
             about()
             continue
 
-        elif (x == 8):
+        elif (x == 10):
             # Accessibility
             continue
-        elif (x == 9):
+        
+        elif (x == 11):
             # User Agreement
             continue
-        elif (x == 10):
+        
+        elif (x == 12):
             # Privacy
-            fileName = "PrivacyPolicy.txt"
+            fileName = "resources\PrivacyPolicy.txt"
             openFile(fileName)
             guestControl(db, (isLoggedIn, userName))
             continue
-        elif (x == 11):
-            # Cookie Policy
-            fileName = "CookiesPolicy.txt"
-            openFile(fileName)
-            continue
-        elif (x == 12):
-            # Copyright Policy
-            fileName = "CopyRightPolicy.txt"
-            openFile(fileName)
-            continue
+        
         elif (x == 13):
+            # Cookie Policy
+            fileName = "resources\CookiesPolicy.txt"
+            openFile(fileName)
+            continue
+        
+        elif (x == 14):
+            # Copyright Policy
+            fileName = "resources\CopyRightPolicy.txt"
+            openFile(fileName)
+            continue
+        
+        elif (x == 15):
             # Brand Policy
             continue
-        elif (x == 14):
+        
+        elif (x == 16):
             # Guest Controls
             guestControl(db, (isLoggedIn, userName))
             continue
-        elif (x == 15):
+        
+        elif (x == 17):
             # Language
             currentLan = language(db, (isLoggedIn, userName))
             continue
+
+        elif (x == 18): 
+           #Job Search/Internship
+             # Create User Profile
+            if isLoggedIn:
+                returned = job(db, (isLoggedIn, userName))
+                isLoggedIn = returned[0]
+                userName = returned[1]
+                print(returned)
+            else:
+                print("User must be logged in")
+                input("please press enter to continue")
+            continue
+            
+       
+               
         elif (option == str(mainTerm)):
             x = mainTerm
             print("Exit!")
             # this is will exit the program
+          
         else:
             print("Invalid input. Please try again.\n")
+
 
 
 def openFile(fileName):
