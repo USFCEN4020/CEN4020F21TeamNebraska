@@ -6,17 +6,18 @@ Useful Links:
  5.  Create/Update User Profile
  6.  Search Profile 
  7.  Show My Network
+ 8.  Jobs/Internships
 
 InCollege Important Links:
- 8.  A Copyright Notice
- 9.  About
- 10. Accessibility
- 11. User Agreement
- 12. Privacy Policy
- 13. Cookie Policy
- 14. Copyright Policy
- 15. Brand Policy
- 16. Guest Controls
- 17. Language
+ 9.  A Copyright Notice
+ 10.  About
+ 11. Accessibility
+ 12. User Agreement
+ 13. Privacy Policy
+ 14. Cookie Policy
+ 15. Copyright Policy
+ 16. Brand Policy
+ 17. Guest Controls
+ 18. Language
 
- 18. Exit
+ 19. Exit

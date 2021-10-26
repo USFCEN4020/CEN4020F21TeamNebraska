@@ -38,9 +38,6 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS appliedFor
 # savedJobs table (username, employer, title)
 cursor.execute('''CREATE TABLE IF NOT EXISTS savedJobs
             (username text, employer text, title text)''')
-#applyInfo table(username, title, graduateDate, startDate, reason, status)
-cursor.execute('''CREATE TABLE IF NOT EXISTS applyInfo
-            (username, title, graduateDate, startDate, reason, status)''')
 
 
 # calling the main menu function

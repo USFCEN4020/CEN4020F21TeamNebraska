@@ -2,9 +2,10 @@ from package import dbRead as rd
 from package import dbWrite as wr
 from package import userIO as io
 from package import friend as fd
+from package.job import postJob
 
 
-mainTerm = 18
+mainTerm = 19 #modified by weiqian, exit the menu
 isLoggedIn = 0
 currentLan = 1
 languageDict = {1: 'English',
@@ -299,6 +300,30 @@ def updateEducation(db, username):
 
     wr.insertUserEducation(db, username, entries[counts - 1][1], entries[counts - 1][2], entries[counts - 1][3])
 
+def job(db, loginInfo):
+    x = 0
+    # Since general has access to accountOptions, our login status can change. We will return our login state
+    returnable = loginInfo
+    while x != 2:
+
+        print(io.loadTextFile("job"))
+
+        option = input("Choose following option or enter 2 to return: ")
+        try:
+            x = int(option)
+        except ValueError:
+            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+            x = -1
+            continue
+        if (x == 1):
+            #postJob
+            postJob(db, loginInfo[1])
+            continue 
+        elif (x == 2):
+            print("Returning.")
+        else:
+            print("Please choose a valid option.")
+    return returnable
 
 def updateUserProfile(db, loginInfo):
     x = 0
@@ -381,6 +406,7 @@ def searchProfile(db):
                                 print(f"{dataname[index][index_3]}: {entry}")
                     else:
                         print(f"{dataname[index][index_2]}: {profile}")
+            
         input('Press Enter to continue')
 
 
@@ -462,7 +488,7 @@ def mainMenu(db):
         if isLoggedIn:
             # getting the list of pending requests
             print("Checking to see if you have any new friend requests!")
-            wr.pendingRequest(db, userName)
+            fd.pendingRequests(db, userName)
             
             currentLan = rd.currentLanguage(db, userName)
             if currentLan not in languageDict:
@@ -536,81 +562,102 @@ def mainMenu(db):
 
         elif (x == 6):
             # A Copyright Notice
-            searchProfile(db)
+            fd.connectFriend(db, isLoggedIn, userName)
             continue
 
         elif (x == 7):
             # friends
-            fd.myFriends(db, userName)
-
-            choice = input("Enter 1 to Connect with someone or 2 to Disconnect from someone: ")
-            if (choice == 1):
-                fd.connectFriend(db, isLoggedIn, userName)
-
-            elif (choice == 2):
-                toDelete = input("Enter the name of the user you want to disconnect with: ")
-                fd.deleteFriend(db, userName, toDelete)
-            else:
-                print("\ninvalid input, Returning")
+            if (not(isLoggedIn)):
+                print("You must be logged in to use show my network")
                 continue
+            no_friends = fd.myFriends(db, userName)
+            if (no_friends == 2):
+                continue
+            else:
+                choice = input("If you would like to view a friends profile input 1, and if you would like to disconnect from someone input 2: ")
+                choice = int(choice)
+                if (choice == 1):
+                    toView = input("Enter the username of the user profile you would like to view: ")
+                    fd.viewProfile(db, toView)
+                   
+                elif (choice == 2):
+                    toDelete = input("Enter the username of the user you want to disconnect with: ")
+                    fd.deleteFriend(db, userName, toDelete)
+                else:
+                    print("\ninvalid input, Returning")
+                    continue
 
-        elif (x == 8):
+        elif (x == 9):
             # copyright notice
             continue
 
-        elif (x == 9):
+        elif (x == 10):
             # About
             about()
             continue
 
-        elif (x == 10):
+        elif (x == 11):
             # Accessibility
             continue
         
-        elif (x == 11):
+        elif (x == 12):
             # User Agreement
             continue
         
-        elif (x == 12):
+        elif (x == 13):
             # Privacy
             fileName = "resources\PrivacyPolicy.txt"
             openFile(fileName)
             guestControl(db, (isLoggedIn, userName))
             continue
         
-        elif (x == 13):
+        elif (x == 14):
             # Cookie Policy
             fileName = "resources\CookiesPolicy.txt"
             openFile(fileName)
             continue
         
-        elif (x == 14):
+        elif (x == 15):
             # Copyright Policy
             fileName = "resources\CopyRightPolicy.txt"
             openFile(fileName)
             continue
         
-        elif (x == 15):
+        elif (x == 16):
             # Brand Policy
             continue
         
-        elif (x == 16):
+        elif (x == 17):
             # Guest Controls
             guestControl(db, (isLoggedIn, userName))
             continue
         
-        elif (x == 17):
+        elif (x == 18):
             # Language
             currentLan = language(db, (isLoggedIn, userName))
             continue
-        
+
+        elif (x == 8): 
+           #Job Search/Internship
+             # Create User Profile
+            if isLoggedIn:
+                returned = job(db, (isLoggedIn, userName))
+                isLoggedIn = returned[0]
+                userName = returned[1]
+                print(returned)
+            else:
+                print("User must be logged in")
+                input("please press enter to continue")
+            continue
+               
         elif (option == str(mainTerm)):
             x = mainTerm
             print("Exit!")
             # this is will exit the program
-        
+          
         else:
             print("Invalid input. Please try again.\n")
+
 
 
 def openFile(fileName):
