@@ -9,7 +9,7 @@ from package.job import postJob
 def getTier(db, username):
         db[0].execute('SELECT tier FROM users WHERE username=?', (username,))
         tier = db[0].fetchone()
-        return tier
+        return tier[0]
 
 
 def chooseMembership():#epic 7

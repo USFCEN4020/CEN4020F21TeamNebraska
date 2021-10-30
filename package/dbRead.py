@@ -95,3 +95,9 @@ def getUserProfile(db, username):
                     return profile
     return profile
 
+# user list utility
+def fetchAllUsers(db): 
+    users = []
+    db[0].execute('SELECT username FROM users')
+    users.append(db[0].fetchall())
+    return users

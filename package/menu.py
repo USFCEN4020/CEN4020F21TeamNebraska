@@ -5,6 +5,7 @@ from package import friend as fd
 from package.job import postJob
 from package import tier as tr
 from package import message as ms
+from package import notify as nt
 
 mainTerm = 20 
 isLoggedIn = 0
@@ -493,7 +494,12 @@ def mainMenu(db):
             # getting the list of pending requests
             print("Checking to see if you have any new friend requests!")
             fd.pendingRequests(db, userName)
-            
+            print('\n')
+            print("Checking for new messages!")
+            nt.getNewMessages(db, userName)
+            print('\n')
+
+
             currentLan = rd.currentLanguage(db, userName)
             if currentLan not in languageDict:
                 currentLan = 1
@@ -605,14 +611,40 @@ def mainMenu(db):
 
         elif (x == 9):
             #messaging
-            
             if isLoggedIn:
-                
-                #returned = job(db, (isLoggedIn, userName))
-                #isLoggedIn = returned[0]
-                #userName = returned[1]
-                #print(returned)
-                ms.connectUsertoMessage(db, isLoggedIn, userName)
+                # Get user Tier
+                tier = tr.getTier(db, userName)
+                choiceMsg = input('Do you want to read, reply, or send message? Press 1, 2, or 3 accordingly (Other '
+                                  'key to skip): ')
+                if choiceMsg == '1':
+                    readMsg = input('Do you want to read unread messages? Press Y to proceed.')
+                    if (readMsg == 'Y'):
+                        nt.readMessage(db, userName)
+                    print('\n')
+                if choiceMsg == '2':
+                    replyMsg = input('Do you want to reply to messages? Press Y to proceed')
+                    if (replyMsg == 'Y'):
+                        nt.replyMessage(db, userName)
+                    print('Returning to Main Menu.')
+                    print('\n')
+                if choiceMsg == '3':
+                    print("here")
+                    # if 'Standard' tier
+                    if (tier == 'standard') :
+                        # send message to friends
+                        ms.connectUsertoMessage(db, isLoggedIn, userName)
+                        print('\n')
+                    # if 'plus' tier
+                    elif tier == 'plus':
+                        # fetch list of all users
+                        allUsers = rd.fetchAllUsers(db)
+                        for user in allUsers :
+                            print(user)
+                            print('\n')
+                        selectedUser = input('Enter username from user list that you want to send a message to: ')
+                        # send message to selected user
+                        ms.sendMessage(db, userName, selectedUser, 'plus')
+                        print('\n')
             else:
                 print("User must be logged in")
                 input("please press enter to continue")
