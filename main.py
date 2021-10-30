@@ -10,7 +10,7 @@ db = (cursor, conn)
 
 # users table (username, password, fname, lname, language)
 cursor.execute('''CREATE TABLE IF NOT EXISTS users
-            (username text, password text, fname text, lname text, lan text)''')
+            (username text, password text, fname text, lname text, lan text, tier text)''')
 # jobs table (username, title, description, employer, location, salary)
 cursor.execute('''CREATE TABLE IF NOT EXISTS jobs
             (username text, title text, description text, employer text, location text, salary text)''')
@@ -38,6 +38,12 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS appliedFor
 # savedJobs table (username, employer, title)
 cursor.execute('''CREATE TABLE IF NOT EXISTS savedJobs
             (username text, employer text, title text)''')
+#inbox
+cursor.execute('''CREATE TABLE IF NOT EXISTS inbox
+                (receiver text, sender text, message text, read bool)''')
+#notify
+cursor.execute('''CREATE TABLE IF NOT EXISTS notify
+                (sender text, receiver bool)''')
 
 
 # calling the main menu function

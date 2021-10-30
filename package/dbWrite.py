@@ -2,7 +2,7 @@ from package import dbRead as rd
 from package import userIO as io
 
 # Insert User in Database
-def insertUser(db, username, password, fname, lname, lan):
+def insertUser(db, username, password, fname, lname, lan, tier):
     # counter to limit
     # number of accounts
     count = 1
@@ -12,7 +12,7 @@ def insertUser(db, username, password, fname, lname, lan):
 
     # insert if validated
     if(io.validatePassword(password) and rd.validateUser(db, username) and count <= 10):
-        db[0].execute("INSERT INTO users VALUES (?,?,?,?,?)",(username, password, fname, lname, lan))
+        db[0].execute("INSERT INTO users VALUES (?,?,?,?,?,?)",(username, password, fname, lname, lan, tier))
         db[0].execute("INSERT INTO userFunction VALUES (?,?,?,?)",(username, True, True, True))
         db[0].execute("INSERT INTO userProfile VALUES (?,?,?,?,?)",(username, True, True, True, True))
         db[1].commit()

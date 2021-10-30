@@ -3,9 +3,10 @@ from package import dbWrite as wr
 from package import userIO as io
 from package import friend as fd
 from package.job import postJob
+from package import tier as tr
+from package import message as ms
 
-
-mainTerm = 19 #modified by weiqian, exit the menu
+mainTerm = 20 
 isLoggedIn = 0
 currentLan = 1
 languageDict = {1: 'English',
@@ -28,8 +29,11 @@ def createAccount(db):
     userPassword = input('Enter a Password: ')
     firstName = input('Enter your first name: ')
     lastName = input('Enter your last name: ')
+    print("Membership Plans:")
+    tier = tr.chooseMembership()
     setLanguage = 1
-    isLoggedIn = wr.insertUser(db, userName, userPassword, firstName, lastName, setLanguage)
+    tier = tier.lower() #converts to lowercase
+    isLoggedIn = wr.insertUser(db, userName, userPassword, firstName, lastName, setLanguage, tier)
     if (isLoggedIn == 1):
         return (1, userName)
     else:
@@ -561,7 +565,7 @@ def mainMenu(db):
             continue
 
         elif (x == 6):
-            # A Copyright Notice
+            #Search Profile/Send request
             fd.connectFriend(db, isLoggedIn, userName)
             continue
 
@@ -586,60 +590,9 @@ def mainMenu(db):
                 else:
                     print("\ninvalid input, Returning")
                     continue
-
-        elif (x == 9):
-            # copyright notice
-            continue
-
-        elif (x == 10):
-            # About
-            about()
-            continue
-
-        elif (x == 11):
-            # Accessibility
-            continue
-        
-        elif (x == 12):
-            # User Agreement
-            continue
-        
-        elif (x == 13):
-            # Privacy
-            fileName = "resources\PrivacyPolicy.txt"
-            openFile(fileName)
-            guestControl(db, (isLoggedIn, userName))
-            continue
-        
-        elif (x == 14):
-            # Cookie Policy
-            fileName = "resources\CookiesPolicy.txt"
-            openFile(fileName)
-            continue
-        
-        elif (x == 15):
-            # Copyright Policy
-            fileName = "resources\CopyRightPolicy.txt"
-            openFile(fileName)
-            continue
-        
-        elif (x == 16):
-            # Brand Policy
-            continue
-        
-        elif (x == 17):
-            # Guest Controls
-            guestControl(db, (isLoggedIn, userName))
-            continue
-        
-        elif (x == 18):
-            # Language
-            currentLan = language(db, (isLoggedIn, userName))
-            continue
-
         elif (x == 8): 
            #Job Search/Internship
-             # Create User Profile
+             
             if isLoggedIn:
                 returned = job(db, (isLoggedIn, userName))
                 isLoggedIn = returned[0]
@@ -649,6 +602,71 @@ def mainMenu(db):
                 print("User must be logged in")
                 input("please press enter to continue")
             continue
+
+        elif (x == 9):
+            #messaging
+            
+            if isLoggedIn:
+                
+                #returned = job(db, (isLoggedIn, userName))
+                #isLoggedIn = returned[0]
+                #userName = returned[1]
+                #print(returned)
+                ms.connectUsertoMessage(db, isLoggedIn, userName)
+            else:
+                print("User must be logged in")
+                input("please press enter to continue")
+            continue
+        elif (x == 10):
+            # copyright notice
+            continue
+
+        elif (x == 11):
+            # About
+            about()
+            continue
+
+        elif (x == 12):
+            # Accessibility
+            continue
+        
+        elif (x == 13):
+            # User Agreement
+            continue
+        
+        elif (x == 14):
+            # Privacy
+            fileName = "resources\PrivacyPolicy.txt"
+            openFile(fileName)
+            guestControl(db, (isLoggedIn, userName))
+            continue
+        
+        elif (x == 15):
+            # Cookie Policy
+            fileName = "resources\CookiesPolicy.txt"
+            openFile(fileName)
+            continue
+        
+        elif (x == 16):
+            # Copyright Policy
+            fileName = "resources\CopyRightPolicy.txt"
+            openFile(fileName)
+            continue
+        
+        elif (x == 17):
+            # Brand Policy
+            continue
+        
+        elif (x == 18):
+            # Guest Controls
+            guestControl(db, (isLoggedIn, userName))
+            continue
+        
+        elif (x == 19):
+            # Language
+            currentLan = language(db, (isLoggedIn, userName))
+            continue
+
                
         elif (option == str(mainTerm)):
             x = mainTerm

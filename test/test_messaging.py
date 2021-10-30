@@ -3,9 +3,11 @@ import os
 
 from package import dbWrite as wr
 from package import friend as fd
+from package import tier as tr
+from package import message as ms
 
 # deleting the database file
-os.remove("inCollegetest.db")
+#os.remove("inCollegetest.db")
 
 # creating the database
 conn = sqlite3.connect('inCollegetest.db')
@@ -29,6 +31,18 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS userFriends
             (username text, friend text)''')
 cursor.execute('''CREATE TABLE IF NOT EXISTS friendRequests
             (username text, request text)''')
+# appliedFor table (username, employer, title, graduation, startDate, whyU, whyThisJob)
+cursor.execute('''CREATE TABLE IF NOT EXISTS appliedFor
+            (username text, employer text, title text, graduation text, startDate text, whyU text, whyThisJob text)''')
+# savedJobs table (username, employer, title)
+cursor.execute('''CREATE TABLE IF NOT EXISTS savedJobs
+            (username text, employer text, title text)''')
+#inbox
+cursor.execute('''CREATE TABLE IF NOT EXISTS inbox
+                (receiver text, sender text, message text, read bool)''')
+#notify
+cursor.execute('''CREATE TABLE IF NOT EXISTS notify
+                (sender text, receiver bool)''')
 
 
 # entering dummy users into the database
@@ -43,26 +57,10 @@ wr.insertUser(db, 'darthmartain','Starwars123!','Nickoly', 'micky', 1, "plus")
 wr.insertUser(db, 'KnightNinja','Knsd123!','Knight', 'Ninja', 1, "plus")
 
 
-def test_friends():
-    # printing james friend list
-    fd.myFriends(db, "James_88")
 
-    # sending friend requests from 
-    fd.sendFriendRequest(db, "Unemployed_Todd", "James_88")
-    fd.sendFriendRequest(db, "Billy_The_Goat", "James_88")
-    fd.sendFriendRequest(db, "KnightNinja", "James_88")
-    fd.sendFriendRequest(db, 'Parxi', "James_88")
-    fd.sendFriendRequest(db, 'Parxi', "James_88") # this user already sent a friend request before
+def testMessaging():
     
-    # going through james pending requests
-    fd.pendingRequests(db, "James_88")
-
-    # checking to see if friends were added to james friend list
-    fd.myFriends(db, "James_88")
-
-    # removing billy and todd from james friend list
-    fd.deleteFriend(db, "James_88", "Billy_The_Goat")
-    fd.deleteFriend(db, "James_88", "KnightNinja")
-
-    # checking to see if billy and tood were removed or not
-    fd.myFriends(db, "James_88")
+    assert ms.sendMessage(db, "Unemployed_Todd", "Parxi", "standard") == -1 #Sending message to non-friend == Should Fail beacuse of standard memebership
+    assert ms.sendMessage(db, "Unemployed_Todd", "Parxi", "plus") == 1 #Sending message to non-friend == Should work beacuse of plus memebership
+    
+    
