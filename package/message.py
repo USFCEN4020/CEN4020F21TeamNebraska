@@ -62,7 +62,7 @@ def connectUsertoMessage(db, isLoggedIn, username):
                     select = int(select)
                     tier = tr.getTier(db, username)
                     
-                    sendMessage(db, username, users[select - 1][0], tier) #sendFriendRequest(db, username, users[select - 1][0])
+                    sendMessage(db, username, users[select - 1][0], 'standard') #sendFriendRequest(db, username, users[select - 1][0])
 
                 return 1
 
@@ -84,7 +84,7 @@ def connectUsertoMessage(db, isLoggedIn, username):
                     select = input("Select the number coresponding with the user you want to send a message to: ")
                     select = int(select)
                 
-                    sendMessage(db, username, users[select - 1][0], tier) #sendFriendRequest(db, username, users[select - 1][0])
+                    sendMessage(db, username, users[select - 1][0], 'standard') #sendFriendRequest(db, username, users[select - 1][0])
 
                 return 1
 
@@ -104,7 +104,7 @@ def connectUsertoMessage(db, isLoggedIn, username):
                     select = input("Select the number coresponding with the user you want to send a message to: ")
                     select = int(select)
                 
-                    sendMessage(db, username, users[select - 1][0], tier)
+                    sendMessage(db, username, users[select - 1][0], 'standard')
 
                 return 1
 
