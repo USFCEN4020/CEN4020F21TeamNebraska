@@ -63,6 +63,7 @@ def deleteJob(db, username, employer, title):
 
             # potentionaly send canidids a message
 
+
 # print all jobs
 def printJobs(db, username):
     jobs = []
@@ -90,36 +91,121 @@ def printJobs(db, username):
     if choice >= 1 and choice <= 10:
         option = input("Enter 1 to apply for job, 2 to save job, or anything else to leave")
 
+        # apply for job
         if option == 1:
-            # apply for job
             if username == jobs[0][choice -1][0]:
                 print("you can not apply for a job you posted")
                 return
 
-            ##
-            ##  apply for job function call here
-            ##
-	    graduateDate = single_line_string("Enter the graduation date: ")
-            startDate = single_line_string("Enter the date you can start working: ")
-            reason = mutli_line_string("Enter why you would be a good fit for this job: ")
+            # check to see if user has already applied for this job
+            applied = []
+            db[0].execute("SELECT * FROM appliedFor WHERE username=? AND employer=? AND title=?",
+                         (username, jobs[0][choice - 1][3], jobs[0][choice - 1][1]))
+            applied.append(db[0].fetchall())
+            if len(applied[0]) != 0:
+                print("You have already applied to this job")
+                return 
 
-            cursor.execute(
-                """
-            INSERT INTO applyInfo (username, title, graduateDate, startDate, reason, status) VALUES(?,?,?,?,?,'applied')""",
-                (username, number[choice - 1][2], graduateDate, startDate, reason),
-            )
-            db.commit()
-            print("Your applied jobs info has been created.")
-            db.close()
+            # additional user application info
+            graduateDate = input("Enter your graduation date as ('mm/dd/yyyy'): ")
+            startDate = input("Enter the date you can start working as ('mm/dd/yyyy'): ")
+            reason = input("Enter why you would be a good fit for this job: ")
+            whyThis = input("Why did you pick this job: ")
+
+            # aading to the databse
+            db[0].execute("INSERT INTO appliedFor VALUES (?,?,?,?,?,?,?)", 
+                         (username, jobs[0][choice - 1][3], jobs[0][choice - 1][1], graduateDate, startDate, reason, whyThis))
+            db[1].commit()
+            
+            print("You have successfully applied to the job.")
+            return
         
+        # save job
         if option == 2:
-            # save job
-            db[0].execute("INSERT INTO savedJobs VALUES (?,?, ?)",(username, jobs[0][choice -1][3], jobs[0][choice -1][1]))
+            db[0].execute("INSERT INTO savedJobs VALUES (?,?,?)",(username, jobs[0][choice -1][3], jobs[0][choice -1][1]))
             db[1].commit()
             return
 
         print("Leaving ... ")
         return
+
+
+def showApplied(db, username):
+    applied = []
+    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (username))
+    applied.append(db[0].fetchall())
+
+    print("Your applied jobs: \n")
+    for x in applied[0]:
+        print("employer: ", x[1])
+        print("title: ", x[2])
+        print()
+
+
+def showNotApplied(db, username):
+    applied = []
+    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (username))
+    applied.append(db[0].fetchall())
+    
+    appliedJobs = []
+    for x in applied[0]:
+        appliedJobs.append((x[1], x[2]))  # applied job's employer, title
+
+    jobs = []
+    db[0].execute("SELECT * FROM jobs")
+    jobs.append(db[0].fetchall())
+    
+    AllJobs = []
+    for x in jobs[0]:
+        AllJobs.append((x[1], x[2]))  # all job's employer title
+
+    NotApplied = [i for i in AllJobs if i not in appliedJobs]
+    print("Your not applied jobs: \n")
+    for x in NotApplied:
+        print("employer: ", x[1])
+        print("title: ", x[2])
+        print()
+
+
+# not sure the reasons for these or how to implement them into the function
+
+#def saveJob(db, username, choice):
+#    find_job = "SELECT * FROM jobs"
+#    cursor.execute(find_job)
+#    results = cursor.fetchall()
+#
+#    choice1 = integer_in_range("\nDo you want to save this job to your list?"
+#                               " 1. Save the job"
+#                               " 2. Back to main menu ", 1, 2, "NULL")
+#    if choice1 == 1:
+#        find_savedjob = "SELECT * FROM applyInfo WHERE username = ? AND title = ? AND status ='saved'"
+#        cursor.execute(find_savedjob, [(username), (results[choice - 1][1])])
+#        st = cursor.fetchall()
+#        if len(st) > 0:
+#            print("You have already saved it")
+#        else:
+#            cursor.execute(
+#                """
+#            INSERT INTO applyInfo (username, title, status) VALUES(?,?,'saved')""",
+#                (username, results[choice - 1][2]),
+#            )
+#            db.commit()
+#            print("The job is saved!")
+
+#def unsaveJob(username):
+#
+#    choice2 = integer_in_range("\nDo you want to unsave any job in your list?"
+#                               " 1. Unsave the job"
+#                               " 2. Back to main menu ", 1, 2, "NULL")
+#    if choice2 == 1:
+#        title1 = (single_line_string("Enter your Title you want to unsave: ")).title()
+#
+#        delete_save = "DELETE FROM applyInfo WHERE username = ? AND title = ? AND status = 'saved'"
+#        cursor.execute(delete_save, [(username), (title1)])
+#        db.commit()
+#
+#        print("this job has been unsaved")
+#        db.close()
 
 
 # job search basically main function for job
@@ -135,106 +221,45 @@ def jobSearch(db, isLoggedIn, username):
             print("1. Show all Jobs")
             print("2. Post a new job")
             print("3. Delete a job")
-	    print("4. Show applied jobs")
-	    print("5. Show jobs have not been applied")
-	    print("6. Show saved jobs")
+            print("4. Show applied jobs")
+            print("5. Show jobs have not been applied")
+            print("6. Show saved jobs")
 	    
-            command = input("Choose an available option, or enter 9 to exit.")
+            # user option
+            y = input("Choose an available option, or enter 9 to exit.")
 
-	    if y == 1:
-   	    	printJobs(db, username)
+            # print all jobs
+            if y == 1:
+   	    	    printJobs(db, username)
+            
+            # post a new job
             if y == 2:
                 postJob(db, username)
                 print()
             
+            # delete a job
             if y == 3:
                 title = input("Enter the title of the job you want to delete")
                 employer = input("Enter the employer of the job you want to delete")
                 deleteJob(db, username, title, employer)
                 print()
-	    if y == 4
-		find_JobsApplied = "SELECT * FROM applyInfo WHERE username = ? AND status = 'applied'"
-    		cursor.execute(find_JobsApplied, [(username)])
-    		results = cursor.fetchall()
+            
+            # shows jobs you have applied for
+            if y == 4:
+                showApplied(db, username)
+            
+            # shows jobs you have not applied for yet
+            if y == 5:
+                showNotApplied(db, username)
 
-    		print("Your applied jobs: \n")
-    		for applied in results:
-        	print("title: ", applied[1])
-        
-	    if y == 5
-		find_JobsApplied = "SELECT * FROM applyInfo WHERE username = ? AND status = 'applied'"
-    		cursor.execute(find_JobsApplied, [(username)])
-   		results = cursor.fetchall()
-   		AppliedJobs = []
-    		for applied in results:
-        		AppliedJobs.append(applied[1])  # applied job's title
+            # shows saved jobs
+            if y == 6:
+                saved = []
+                db[0].execute("SELECT * FROM savedJobs WHERE username=?", (username))
+                saved.append(db[0].fetchall())
 
-    		cursor.execute("SELECT * FROM jobs")
-    		job_results = cursor.fetchall()
-    		AllJobs = []
-    		for each in job_results:
-        		AllJobs.append(each[2])  # all jobs' title
-
-    		# NotApplied = []
-    		#NotApplied = list(set(AppliedJobs).difference(set(AllJobs)))  # difference AppliedJobs
-   	 	NotApplied = [i for i in AllJobs if i not in AppliedJobs]
-    		print("Your not applied jobs: \n")
-    		for x in NotApplied:
-        		print("title: ", x)
-		
-	    if y == 6
-		find_JobsSaved = "SELECT * FROM applyInfo WHERE username = ? AND status = 'saved'"
-    		cursor.execute(find_JobsSaved, [(username)])
-    		results = cursor.fetchall()
-
-    		if len(results) > 0:
-        		print("Your saved jobs: \n")
-        		for saved in results:
-            		print("title: ", saved[1])
-            		unsaveJob(username)
-    		else:
-        		print("You haven't save any job!")
-	else:
-                return
-
-    return
-
-def saveJob(db, username, choice):
-
-    find_job = "SELECT * FROM jobs"
-    cursor.execute(find_job)
-    results = cursor.fetchall()
-
-    choice1 = integer_in_range("\nDo you want to save this job to your list?"
-                               " 1. Save the job"
-                               " 2. Back to main menu ", 1, 2, "NULL")
-    if choice1 == 1:
-        find_savedjob = "SELECT * FROM applyInfo WHERE username = ? AND title = ? AND status ='saved'"
-        cursor.execute(find_savedjob, [(username), (results[choice - 1][1])])
-        st = cursor.fetchall()
-        if len(st) > 0:
-            print("You have already saved it")
-        else:
-            cursor.execute(
-                """
-            INSERT INTO applyInfo (username, title, status) VALUES(?,?,'saved')""",
-                (username, results[choice - 1][2]),
-            )
-            db.commit()
-            print("The job is saved!")
-
-def unsaveJob(username):
-
-    choice2 = integer_in_range("\nDo you want to unsave any job in your list?"
-                               " 1. Unsave the job"
-                               " 2. Back to main menu ", 1, 2, "NULL")
-    if choice2 == 1:
-        title1 = (single_line_string("Enter your Title you want to unsave: ")).title()
-
-        delete_save = "DELETE FROM applyInfo WHERE username = ? AND title = ? AND status = 'saved'"
-        cursor.execute(delete_save, [(username), (title1)])
-        db.commit()
-
-        print("this job has been unsaved")
-        db.close()
-
+                print("Your applied jobs: \n")
+                for x in saved[0]:
+                    print("employer: ", saved[1])
+                    print("title: ", saved[2])
+                    print()

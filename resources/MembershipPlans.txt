@@ -1,0 +1,6 @@
+1. Standard Membership
+   Standard members can send and receive messages from people who have accepted 
+   their friend requests only. This membership is free of charge.
+2. Plus Membership
+   Plus members will have all the perks from the Standard membership, but will aslo
+   send messages any member. This membership is $10/mo

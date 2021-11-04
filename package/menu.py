@@ -2,9 +2,12 @@ from package import dbRead as rd
 from package import dbWrite as wr
 from package import userIO as io
 from package import friend as fd
+from package.job import postJob
+from package import tier as tr
+from package import message as ms
+from package import notify as nt
 
-
-mainTerm = 18
+mainTerm = 20 
 isLoggedIn = 0
 currentLan = 1
 languageDict = {1: 'English',
@@ -27,8 +30,11 @@ def createAccount(db):
     userPassword = input('Enter a Password: ')
     firstName = input('Enter your first name: ')
     lastName = input('Enter your last name: ')
+    print("Membership Plans:")
+    tier = tr.chooseMembership()
     setLanguage = 1
-    isLoggedIn = wr.insertUser(db, userName, userPassword, firstName, lastName, setLanguage)
+    tier = tier.lower() #converts to lowercase
+    isLoggedIn = wr.insertUser(db, userName, userPassword, firstName, lastName, setLanguage, tier)
     if (isLoggedIn == 1):
         return (1, userName)
     else:
@@ -299,6 +305,30 @@ def updateEducation(db, username):
 
     wr.insertUserEducation(db, username, entries[counts - 1][1], entries[counts - 1][2], entries[counts - 1][3])
 
+def job(db, loginInfo):
+    x = 0
+    # Since general has access to accountOptions, our login status can change. We will return our login state
+    returnable = loginInfo
+    while x != 2:
+
+        print(io.loadTextFile("job"))
+
+        option = input("Choose following option or enter 2 to return: ")
+        try:
+            x = int(option)
+        except ValueError:
+            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+            x = -1
+            continue
+        if (x == 1):
+            #postJob
+            postJob(db, loginInfo[1])
+            continue 
+        elif (x == 2):
+            print("Returning.")
+        else:
+            print("Please choose a valid option.")
+    return returnable
 
 def updateUserProfile(db, loginInfo):
     x = 0
@@ -381,6 +411,7 @@ def searchProfile(db):
                                 print(f"{dataname[index][index_3]}: {entry}")
                     else:
                         print(f"{dataname[index][index_2]}: {profile}")
+            
         input('Press Enter to continue')
 
 
@@ -462,8 +493,13 @@ def mainMenu(db):
         if isLoggedIn:
             # getting the list of pending requests
             print("Checking to see if you have any new friend requests!")
-            wr.pendingRequest(db, userName)
-            
+            fd.pendingRequests(db, userName)
+            print('\n')
+            print("Checking for new messages!")
+            nt.getNewMessages(db, userName)
+            print('\n')
+
+
             currentLan = rd.currentLanguage(db, userName)
             if currentLan not in languageDict:
                 currentLan = 1
@@ -535,82 +571,143 @@ def mainMenu(db):
             continue
 
         elif (x == 6):
-            # A Copyright Notice
-            searchProfile(db)
+            #Search Profile/Send request
+            fd.connectFriend(db, isLoggedIn, userName)
             continue
 
         elif (x == 7):
             # friends
-            fd.myFriends(db, userName)
-
-            choice = input("Enter 1 to Connect with someone or 2 to Disconnect from someone: ")
-            if (choice == 1):
-                fd.connectFriend(db, isLoggedIn, userName)
-
-            elif (choice == 2):
-                toDelete = input("Enter the name of the user you want to disconnect with: ")
-                fd.deleteFriend(db, userName, toDelete)
-            else:
-                print("\ninvalid input, Returning")
+            if (not(isLoggedIn)):
+                print("You must be logged in to use show my network")
                 continue
-
-        elif (x == 8):
-            # copyright notice
+            no_friends = fd.myFriends(db, userName)
+            if (no_friends == 2):
+                continue
+            else:
+                choice = input("If you would like to view a friends profile input 1, and if you would like to disconnect from someone input 2: ")
+                choice = int(choice)
+                if (choice == 1):
+                    toView = input("Enter the username of the user profile you would like to view: ")
+                    fd.viewProfile(db, toView)
+                   
+                elif (choice == 2):
+                    toDelete = input("Enter the username of the user you want to disconnect with: ")
+                    fd.deleteFriend(db, userName, toDelete)
+                else:
+                    print("\ninvalid input, Returning")
+                    continue
+        elif (x == 8): 
+           #Job Search/Internship
+             
+            if isLoggedIn:
+                returned = job(db, (isLoggedIn, userName))
+                isLoggedIn = returned[0]
+                userName = returned[1]
+                print(returned)
+            else:
+                print("User must be logged in")
+                input("please press enter to continue")
             continue
 
         elif (x == 9):
+            #messaging
+            if isLoggedIn:
+                # Get user Tier
+                tier = tr.getTier(db, userName)
+                choiceMsg = input('Do you want to read, reply, or send message? Press 1, 2, or 3 accordingly (Other '
+                                  'key to skip): ')
+                if choiceMsg == '1':
+                    readMsg = input('Do you want to read unread messages? Press Y to proceed.')
+                    if (readMsg == 'Y'):
+                        nt.readMessage(db, userName)
+                    print('\n')
+                if choiceMsg == '2':
+                    replyMsg = input('Do you want to reply to messages? Press Y to proceed')
+                    if (replyMsg == 'Y'):
+                        nt.replyMessage(db, userName)
+                    print('Returning to Main Menu.')
+                    print('\n')
+                if choiceMsg == '3':
+                    print("here")
+                    # if 'Standard' tier
+                    if (tier == 'standard') :
+                        # send message to friends
+                        ms.connectUsertoMessage(db, isLoggedIn, userName)
+                        print('\n')
+                    # if 'plus' tier
+                    elif tier == 'plus':
+                        # fetch list of all users
+                        allUsers = rd.fetchAllUsers(db)
+                        for user in allUsers :
+                            print(user)
+                            print('\n')
+                        selectedUser = input('Enter username from user list that you want to send a message to: ')
+                        # send message to selected user
+                        ms.sendMessage(db, userName, selectedUser, 'plus')
+                        print('\n')
+            else:
+                print("User must be logged in")
+                input("please press enter to continue")
+            continue
+        elif (x == 10):
+            # copyright notice
+            continue
+
+        elif (x == 11):
             # About
             about()
             continue
 
-        elif (x == 10):
+        elif (x == 12):
             # Accessibility
             continue
         
-        elif (x == 11):
+        elif (x == 13):
             # User Agreement
             continue
         
-        elif (x == 12):
+        elif (x == 14):
             # Privacy
             fileName = "resources\PrivacyPolicy.txt"
             openFile(fileName)
             guestControl(db, (isLoggedIn, userName))
             continue
         
-        elif (x == 13):
+        elif (x == 15):
             # Cookie Policy
             fileName = "resources\CookiesPolicy.txt"
             openFile(fileName)
             continue
         
-        elif (x == 14):
+        elif (x == 16):
             # Copyright Policy
             fileName = "resources\CopyRightPolicy.txt"
             openFile(fileName)
             continue
         
-        elif (x == 15):
+        elif (x == 17):
             # Brand Policy
             continue
         
-        elif (x == 16):
+        elif (x == 18):
             # Guest Controls
             guestControl(db, (isLoggedIn, userName))
             continue
         
-        elif (x == 17):
+        elif (x == 19):
             # Language
             currentLan = language(db, (isLoggedIn, userName))
             continue
-        
+
+               
         elif (option == str(mainTerm)):
             x = mainTerm
             print("Exit!")
             # this is will exit the program
-        
+          
         else:
             print("Invalid input. Please try again.\n")
+
 
 
 def openFile(fileName):

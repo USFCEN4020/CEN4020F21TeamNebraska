@@ -4,19 +4,21 @@ Useful Links:
  3.  Business Solutions
  4.  Directories
  5.  Create/Update User Profile
- 6.  Search Profile 
+ 6.  Search Profile/Send Friend Request 
  7.  Show My Network
+ 8.  Jobs/Internships
+ 9.  Messaging
 
 InCollege Important Links:
- 8.  A Copyright Notice
- 9.  About
- 10. Accessibility
- 11. User Agreement
- 12. Privacy Policy
- 13. Cookie Policy
- 14. Copyright Policy
- 15. Brand Policy
- 16. Guest Controls
- 17. Language
+ 10.  A Copyright Notice
+ 11.  About
+ 12. Accessibility
+ 13. User Agreement
+ 14. Privacy Policy
+ 15. Cookie Policy
+ 16. Copyright Policy
+ 17. Brand Policy
+ 18. Guest Controls
+ 19. Language
 
- 18. Exit
+ 20. Exit
