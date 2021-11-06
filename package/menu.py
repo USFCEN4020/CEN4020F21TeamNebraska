@@ -3,6 +3,7 @@ from package import dbWrite as wr
 from package import userIO as io
 from package import friend as fd
 from package.job import postJob
+from package import job as jb
 from package import tier as tr
 from package import message as ms
 from package import notify as nt
@@ -499,7 +500,12 @@ def mainMenu(db):
             print("Checking for new messages!")
             nt.getNewMessages(db, userName)
             print('\n')
-
+            # Check for deleted job
+            jb.isDeleted(db, userName)
+            # Check for new jobs
+            jb.isNewJob(db, userName)
+            # Check for recently applied jobs
+            jb.hasAppliedRecently(db, userName)
 
             currentLan = rd.currentLanguage(db, userName)
             if currentLan not in languageDict:
@@ -708,7 +714,7 @@ def mainMenu(db):
           
         else:
             print("Invalid input. Please try again.\n")
-    
+
     return userName
 
 

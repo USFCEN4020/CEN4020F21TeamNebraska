@@ -35,7 +35,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS friendRequests
             (username text, request text)''')
 # appliedFor table (username, employer, title, graduation, startDate, whyU, whyThisJob)
 cursor.execute('''CREATE TABLE IF NOT EXISTS appliedFor
-            (username text, employer text, title text, graduation text, startDate text, whyU text, whyThisJob text)''')
+            (username text, employer text, title text, graduation text, startDate text, whyU text, whyThisJob text, applydate current_timestamp)''')
 # savedJobs table (username, employer, title)
 cursor.execute('''CREATE TABLE IF NOT EXISTS savedJobs
             (username text, employer text, title text)''')
