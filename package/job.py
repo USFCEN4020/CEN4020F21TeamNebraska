@@ -291,7 +291,8 @@ def isNewJob(db, userName) :
         cur_time = time.time()
         # 86400 seconds in a day
         # A job is considered new if it was posted within a day
-        if (cur_time - x[6] <= 86400) :
+        prev = datetime.timestamp(x[6])
+        if (cur_time - prev <= 86400) :
             print("A new job has been posted! Go to job search tab to check it out.")
     return
 
