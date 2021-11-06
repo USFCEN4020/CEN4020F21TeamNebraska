@@ -6,6 +6,7 @@ from package.job import postJob
 from package import tier as tr
 from package import message as ms
 from package import notify as nt
+from datetime import datetime as dt
 
 mainTerm = 20 
 isLoggedIn = 0
@@ -34,7 +35,7 @@ def createAccount(db):
     tier = tr.chooseMembership()
     setLanguage = 1
     tier = tier.lower() #converts to lowercase
-    isLoggedIn = wr.insertUser(db, userName, userPassword, firstName, lastName, setLanguage, tier)
+    isLoggedIn = wr.insertUser(db, userName, userPassword, firstName, lastName, setLanguage, tier, dt.now())
     if (isLoggedIn == 1):
         return (1, userName)
     else:
@@ -491,7 +492,7 @@ def mainMenu(db):
         print()
 
         if isLoggedIn:
-            # getting the list of pending requests
+            # notifications
             print("Checking to see if you have any new friend requests!")
             fd.pendingRequests(db, userName)
             print('\n')
@@ -707,6 +708,8 @@ def mainMenu(db):
           
         else:
             print("Invalid input. Please try again.\n")
+    
+    return userName
 
 
 

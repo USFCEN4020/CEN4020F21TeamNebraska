@@ -1,4 +1,7 @@
 # logs a user in
+from package.dbWrite import updateUserLogin
+
+
 def loginUser(db, username, password):
     # fetch user
     db[0].execute('SELECT username, password FROM users WHERE username=? AND password=?', (username, password))

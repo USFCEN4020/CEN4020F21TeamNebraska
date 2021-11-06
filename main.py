@@ -1,16 +1,17 @@
 import sqlite3
+import atexit
 from package import menu as menu
-
+from package import dbWrite as wr
+from datetime import datetime
 
 # Creating the database
 conn = sqlite3.connect('inCollege.db')
 cursor = conn.cursor()
 db = (cursor, conn)
 
-
 # users table (username, password, fname, lname, language)
 cursor.execute('''CREATE TABLE IF NOT EXISTS users
-            (username text, password text, fname text, lname text, lan text, tier text)''')
+            (username text, password text, fname text, lname text, lan text, tier text, lastLogin datetime, createdOn datetime)''')
 # jobs table (username, title, description, employer, location, salary)
 cursor.execute('''CREATE TABLE IF NOT EXISTS jobs
             (username text, title text, description text, employer text, location text, salary text)''')
@@ -47,4 +48,13 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS notify
 
 
 # calling the main menu function
-menu.mainMenu(db)
+username = menu.mainMenu(db)
+def exit_handler(db, username):
+    if(username == ""):
+        return
+    else:
+        wr.updateUserLogin(db, username)
+        return
+    return
+
+atexit.register(exit_handler(db, username))
