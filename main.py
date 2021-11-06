@@ -13,7 +13,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS users
             (username text, password text, fname text, lname text, lan text, tier text)''')
 # jobs table (username, title, description, employer, location, salary)
 cursor.execute('''CREATE TABLE IF NOT EXISTS jobs
-            (username text, title text, description text, employer text, location text, salary text)''')
+            (username text, title text, description text, employer text, location text, salary text, postdate current_timestamp)''')
 # userFunction table (username, email, sms, targetAD)
 cursor.execute('''CREATE TABLE IF NOT EXISTS userFunction
             (username text, email bool, sms bool, targetAD bool)''')
@@ -34,7 +34,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS friendRequests
             (username text, request text)''')
 # appliedFor table (username, employer, title, graduation, startDate, whyU, whyThisJob)
 cursor.execute('''CREATE TABLE IF NOT EXISTS appliedFor
-            (username text, employer text, title text, graduation text, startDate text, whyU text, whyThisJob text)''')
+            (username text, employer text, title text, graduation text, startDate text, whyU text, whyThisJob text, applydate current_timestamp)''')
 # savedJobs table (username, employer, title)
 cursor.execute('''CREATE TABLE IF NOT EXISTS savedJobs
             (username text, employer text, title text)''')
