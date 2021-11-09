@@ -1,8 +1,14 @@
 from package import dbRead as rd
 from package import userIO as io
+from datetime import datetime as dt
+
+def updateUserLogin(db, username):
+    db[0].execute("UPDATE users SET lastLogin = (?) WHERE username = (?)", dt.now(), username)
+    db[1].commit()
+    return
 
 # Insert User in Database
-def insertUser(db, username, password, fname, lname, lan, tier):
+def insertUser(db, username, password, fname, lname, lan, tier, now):
     # counter to limit
     # number of accounts
     count = 1
@@ -12,7 +18,7 @@ def insertUser(db, username, password, fname, lname, lan, tier):
 
     # insert if validated
     if(io.validatePassword(password) and rd.validateUser(db, username) and count <= 10):
-        db[0].execute("INSERT INTO users VALUES (?,?,?,?,?,?)",(username, password, fname, lname, lan, tier))
+        db[0].execute("INSERT INTO users VALUES (?,?,?,?,?,?, ?, ?)",(username, password, fname, lname, lan, tier, now, now))
         db[0].execute("INSERT INTO userFunction VALUES (?,?,?,?)",(username, True, True, True))
         db[0].execute("INSERT INTO userProfile VALUES (?,?,?,?,?)",(username, True, True, True, True))
         db[1].commit()

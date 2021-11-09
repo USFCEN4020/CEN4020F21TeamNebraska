@@ -1,3 +1,6 @@
+import time
+from datetime import datetime
+
 # commit a job
 def commitJob(userName, db, title, description, employer, location, salary):
     # counter to limit
@@ -10,7 +13,8 @@ def commitJob(userName, db, title, description, employer, location, salary):
         print("All permitted Jobs Have been created")
         return 1
     else:
-        db[0].execute("INSERT INTO jobs VALUES (?,?,?,?,?,?)",(userName, title,description, employer, location, salary))
+        dt_object = datetime.fromtimestamp(time.time())
+        db[0].execute("INSERT INTO jobs VALUES (?,?,?,?,?,?)",(userName, title,description, employer, location, salary, dt_object))
         db[1].commit()
         print("Job", title, "posted successfully!")
 
@@ -113,8 +117,9 @@ def printJobs(db, username):
             whyThis = input("Why did you pick this job: ")
 
             # aading to the databse
+            dt_object = datetime.fromtimestamp(time.time())
             db[0].execute("INSERT INTO appliedFor VALUES (?,?,?,?,?,?,?)", 
-                         (username, jobs[0][choice - 1][3], jobs[0][choice - 1][1], graduateDate, startDate, reason, whyThis))
+                         (username, jobs[0][choice - 1][3], jobs[0][choice - 1][1], graduateDate, startDate, reason, whyThis, dt_object))
             db[1].commit()
             
             print("You have successfully applied to the job.")
@@ -140,6 +145,7 @@ def showApplied(db, username):
         print("employer: ", x[1])
         print("title: ", x[2])
         print()
+    return len(applied)
 
 
 def showNotApplied(db, username):
@@ -211,6 +217,7 @@ def showNotApplied(db, username):
 # job search basically main function for job
 def jobSearch(db, isLoggedIn, username):
     y = 0
+    num_of_jobs = showApplied(db, username)
     if (isLoggedIn == 0):
         print("Please log in to access job search and posting.")
         input("Press enter to return to the main menu.")
@@ -224,7 +231,7 @@ def jobSearch(db, isLoggedIn, username):
             print("4. Show applied jobs")
             print("5. Show jobs have not been applied")
             print("6. Show saved jobs")
-	    
+            print("You have applied for: ", num_of_jobs, " number of jobs.")
             # user option
             y = input("Choose an available option, or enter 9 to exit.")
 
@@ -263,3 +270,46 @@ def jobSearch(db, isLoggedIn, username):
                     print("employer: ", saved[1])
                     print("title: ", saved[2])
                     print()
+
+# Check for deleted jobs
+def isDeleted(db, userName) :
+    applied = []
+    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (userName))
+    applied.append(db[0].fetchall())
+    for x in applied[0]:
+        db[0].execute("SELECT * FROM appliedFor WHERE username=? AND employer=?", (userName, x[1]))
+        temp_data = db[0].fetchall()
+        if len(temp_data) == 0:
+            print("The job: ", x[2], " that you applied for has been deleted!")
+
+# Search for new posted jobs
+def isNewJob(db, userName) :
+    jobs = []
+    db[0].execute("SELECT * FROM jobs")
+    jobs.append(db[0].fetchall())
+    for x in jobs[0] :
+        cur_time = time.time()
+        # 86400 seconds in a day
+        # A job is considered new if it was posted within a day
+        prev = datetime.timestamp(x[6])
+        if (cur_time - prev <= 86400) :
+            print("A new job has been posted! Go to job search tab to check it out.")
+    return
+
+# Check if applied for a job recently
+def hasAppliedRecently(db, userName) :
+    applied = []
+    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (userName))
+    applied.append(db[0].fetchall())
+    max_time = 0
+    for x in applied[0] :
+        if (x[0] == userName) :
+            # find latest time applied
+            if (x[7] > max_time) :
+                max_time = x[7]
+
+    # 604800 seconds in 7 days
+    cur_time = time.time()
+    if (cur_time - max_time > 604800) :
+        print("You haven't applied for a job in 7 days!")
+    return
