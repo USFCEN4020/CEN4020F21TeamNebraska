@@ -9,7 +9,7 @@ from package import message as ms
 from package import notify as nt
 from datetime import datetime as dt
 
-mainTerm = 20 
+mainTerm = 21
 isLoggedIn = 0
 currentLan = 1
 languageDict = {1: 'English',
@@ -478,6 +478,123 @@ def guestControl(db, loginInfo):
                 print('Please enter a valid number')
 
 
+def training(db, loginInfo):
+    x = 0
+    # training option menu
+    returnable = loginInfo
+    while x != 5:
+
+        print(io.loadTextFile("Training"))
+
+        option = input("Choose which section of your profile you would like to update or enter 5 to return: ")
+        try:
+            x = int(option)
+        except ValueError:
+            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+            x = -1
+            continue
+        if (x == 1):
+            # training and education
+            trainEducation(db, loginInfo)
+            continue
+        elif (x == 2):
+            # IT help desk
+            print('Coming Soon!')
+            continue
+        elif (x == 3):
+            # business analysis and strategy
+            returnable = businessAnalysis(db, loginInfo)
+            continue
+        elif (x == 4):
+            # security
+            print('Coming Soon!')
+            continue
+        elif (x == 5):
+            # Exit
+            print("Returning.")
+        else:
+            print("Please choose a valid option.")
+    return returnable
+
+
+def trainEducation(db, loginInfo):
+    x = 0
+    # training option menu
+    returnable = loginInfo
+    while x != 5:
+
+        print(io.loadTextFile("TrainAndEducation"))
+
+        option = input("Choose which section of your profile you would like to update or enter 5 to return: ")
+        try:
+            x = int(option)
+        except ValueError:
+            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+            x = -1
+            continue
+        if (x == 1):
+            # training and education
+            print('Under Construction')
+            continue
+        elif (x == 2):
+            # IT help desk
+            print('Under Construction')
+            continue
+        elif (x == 3):
+            # business analysis and strategy
+            print('Under Construction')
+            continue
+        elif (x == 4):
+            # security
+            print('Under Construction')
+            continue
+        elif (x == 5):
+            # Exit
+            print("Returning.")
+        else:
+            print("Please choose a valid option.")
+    return returnable
+
+
+def businessAnalysis(db, loginInfo):
+    x = 0
+    # training option menu
+    returnable = loginInfo
+    while x != 5:
+
+        print(io.loadTextFile("TrendingCourses"))
+
+        option = input("Choose which section of your profile you would like to update or enter 5 to return: ")
+        try:
+            x = int(option)
+        except ValueError:
+            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+            x = -1
+            continue
+        if (x == 1):
+            # training and education
+            returnable = accountOptions(db, loginInfo)
+            continue
+        elif (x == 2):
+            # IT help desk
+            returnable = accountOptions(db, loginInfo)
+            continue
+        elif (x == 3):
+            # business analysis and strategy
+            returnable = accountOptions(db, loginInfo)
+            continue
+        elif (x == 4):
+            # security
+            returnable = accountOptions(db, loginInfo)
+            continue
+        elif (x == 5):
+            # Exit
+            print("Returning.")
+        else:
+            print("Please choose a valid option.")
+    return returnable
+
+
 def mainMenu(db):
     global currentLan
     # User option value
@@ -657,51 +774,57 @@ def mainMenu(db):
                 input("please press enter to continue")
             continue
         elif (x == 10):
+            # training
+            training(db, (isLoggedIn, userName))
+            continue
+
+
+        elif (x == 11):
             # copyright notice
             continue
 
-        elif (x == 11):
+        elif (x == 12):
             # About
             about()
             continue
 
-        elif (x == 12):
+        elif (x == 13):
             # Accessibility
             continue
         
-        elif (x == 13):
+        elif (x == 14):
             # User Agreement
             continue
         
-        elif (x == 14):
+        elif (x == 15):
             # Privacy
             fileName = "resources\PrivacyPolicy.txt"
             openFile(fileName)
             guestControl(db, (isLoggedIn, userName))
             continue
         
-        elif (x == 15):
+        elif (x == 16):
             # Cookie Policy
             fileName = "resources\CookiesPolicy.txt"
             openFile(fileName)
             continue
         
-        elif (x == 16):
+        elif (x == 17):
             # Copyright Policy
             fileName = "resources\CopyRightPolicy.txt"
             openFile(fileName)
             continue
         
-        elif (x == 17):
+        elif (x == 18):
             # Brand Policy
             continue
         
-        elif (x == 18):
+        elif (x == 19):
             # Guest Controls
             guestControl(db, (isLoggedIn, userName))
             continue
         
-        elif (x == 19):
+        elif (x == 20):
             # Language
             currentLan = language(db, (isLoggedIn, userName))
             continue
