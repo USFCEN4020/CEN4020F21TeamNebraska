@@ -307,30 +307,32 @@ def updateEducation(db, username):
 
     wr.insertUserEducation(db, username, entries[counts - 1][1], entries[counts - 1][2], entries[counts - 1][3])
 
-def job(db, loginInfo):
-    x = 0
-    # Since general has access to accountOptions, our login status can change. We will return our login state
-    returnable = loginInfo
-    while x != 2:
+# What is this???
 
-        print(io.loadTextFile("job"))
+#def job(db, loginInfo):
+#    x = 0
+#    # Since general has access to accountOptions, our login status can change. We will return our login state
+#    returnable = loginInfo
+#    while x != 2:
 
-        option = input("Choose following option or enter 2 to return: ")
-        try:
-            x = int(option)
-        except ValueError:
-            print("\n\nERROR: Please enter a valid numeric input.\n\n")
-            x = -1
-            continue
-        if (x == 1):
-            #postJob
-            postJob(db, loginInfo[1])
-            continue 
-        elif (x == 2):
-            print("Returning.")
-        else:
-            print("Please choose a valid option.")
-    return returnable
+#        print(io.loadTextFile("job"))
+#
+#        option = input("Choose following option or enter 2 to return: ")
+#        try:
+#            x = int(option)
+#        except ValueError:
+#            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+#            x = -1
+#            continue
+#        if (x == 1):
+#            #postJob
+#            postJob(db, loginInfo[1])
+#            continue 
+#        elif (x == 2):
+#            print("Returning.")
+#        else:
+#            print("Please choose a valid option.")
+#    return returnable
 
 def updateUserProfile(db, loginInfo):
     x = 0
@@ -724,13 +726,17 @@ def mainMenu(db):
            #Job Search/Internship
              
             if isLoggedIn:
-                returned = job(db, (isLoggedIn, userName))
-                isLoggedIn = returned[0]
-                userName = returned[1]
-                print(returned)
+                
+                jb.jobSearch(db, isLoggedIn, userName)
+
+                # What is this???
+                # returned = job(db, (isLoggedIn, userName))
+                # isLoggedIn = returned[0]
+                # userName = returned[1]
+                # print(returned)
             else:
-                print("User must be logged in")
-                input("please press enter to continue")
+                print("User must be logged in!")
+                input("please press anything to continue.")
             continue
 
         elif (x == 9):

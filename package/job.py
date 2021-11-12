@@ -81,7 +81,7 @@ def printJobs(db, username):
     for x in jobs[0]:
         jobCount += 1
 
-        print("1. Title:       {}".format(x[1]))
+        print("{}. Title:       {}".format(jobCount, x[1]))
         print("   Description: {}".format(x[2]))
         print("   Employer:    {}".format(x[3]))
         print("   Location:    {}".format(x[4]))
@@ -137,7 +137,7 @@ def printJobs(db, username):
 
 def showApplied(db, username):
     applied = []
-    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (username))
+    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (username,))
     applied.append(db[0].fetchall())
 
     print("Your applied jobs: \n")
@@ -150,7 +150,7 @@ def showApplied(db, username):
 
 def showNotApplied(db, username):
     applied = []
-    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (username))
+    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (username,))
     applied.append(db[0].fetchall())
     
     appliedJobs = []
