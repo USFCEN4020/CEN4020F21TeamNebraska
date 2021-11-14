@@ -45,7 +45,9 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS inbox
 #notify
 cursor.execute('''CREATE TABLE IF NOT EXISTS notify
                 (sender text, receiver bool)''')
-
+#learning
+cursor.execute('''CREATE TABLE IF NOT EXISTS learning
+                (username text, courseName text)''')
 
 # calling the main menu function
 username = menu.mainMenu(db)

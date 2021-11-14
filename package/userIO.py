@@ -1,8 +1,12 @@
 # stores the contents of file in a string and returns it
 def loadTextFile(name):
     lines = ""
-    for f in open('resources/' + name + '.txt'):
-        lines += f
+    file = open('resources/' + name + '.txt')
+    if(file.closed):
+        print("File not found.")
+    else:
+        for f in file:
+            lines += f
     return lines
 
 def validatePassword(password):

@@ -1,6 +1,10 @@
 # logs a user in
 from package.dbWrite import updateUserLogin
 
+def getCourses(db, username):
+    db[0].execute('SELECT courseName FROM learning WHERE username=(?)', (username,))
+    results = db[0].fetchall()
+    return results
 
 def loginUser(db, username, password):
     # fetch user

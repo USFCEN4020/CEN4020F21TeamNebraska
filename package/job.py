@@ -81,7 +81,7 @@ def printJobs(db, username):
     for x in jobs[0]:
         jobCount += 1
 
-        print("{}. Title:       {}".format(jobCount, x[1]))
+        print("1. Title:       {}".format(x[1]))
         print("   Description: {}".format(x[2]))
         print("   Employer:    {}".format(x[3]))
         print("   Location:    {}".format(x[4]))
@@ -137,7 +137,7 @@ def printJobs(db, username):
 
 def showApplied(db, username):
     applied = []
-    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (username,))
+    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (username))
     applied.append(db[0].fetchall())
 
     print("Your applied jobs: \n")
@@ -150,7 +150,7 @@ def showApplied(db, username):
 
 def showNotApplied(db, username):
     applied = []
-    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (username,))
+    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (username))
     applied.append(db[0].fetchall())
     
     appliedJobs = []
@@ -262,7 +262,7 @@ def jobSearch(db, isLoggedIn, username):
             # shows saved jobs
             if y == 6:
                 saved = []
-                db[0].execute("SELECT * FROM savedJobs WHERE username=?", (username,))
+                db[0].execute("SELECT * FROM savedJobs WHERE username=?", (username))
                 saved.append(db[0].fetchall())
 
                 print("Your applied jobs: \n")
@@ -274,7 +274,7 @@ def jobSearch(db, isLoggedIn, username):
 # Check for deleted jobs
 def isDeleted(db, userName) :
     applied = []
-    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (userName,))
+    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (userName))
     applied.append(db[0].fetchall())
     for x in applied[0]:
         db[0].execute("SELECT * FROM appliedFor WHERE username=? AND employer=?", (userName, x[1]))
@@ -299,7 +299,7 @@ def isNewJob(db, userName) :
 # Check if applied for a job recently
 def hasAppliedRecently(db, userName) :
     applied = []
-    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (userName,))
+    db[0].execute("SELECT * FROM appliedFor WHERE username=?", (userName))
     applied.append(db[0].fetchall())
     max_time = 0
     for x in applied[0] :

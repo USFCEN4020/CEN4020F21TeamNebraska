@@ -7,6 +7,7 @@ from package import job as jb
 from package import tier as tr
 from package import message as ms
 from package import notify as nt
+from package import notifications as notif
 from datetime import datetime as dt
 
 mainTerm = 21
@@ -16,6 +17,54 @@ languageDict = {1: 'English',
                 2: 'Spanish'
                 }
 
+def searchList(list, key):
+    i = 0
+    for i in range(len(list)):
+        if(list[i]==key):
+            return i
+    return -1
+
+def inCollegeLearning(db, username):
+    x = -1
+    key=""
+    print(io.loadTextFile("inCollegeLearning"))
+    print()
+    courses = rd.getCourses(db, username)
+    while(x == -1):
+        option = input("Choose from available options: ")
+        try:
+            x = int(option)
+        except ValueError:
+            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+            x = -1
+            continue
+    if(x == 1):
+        key = "How to use inCollegeLearning"
+    if(x==2):
+        key = "Train the Trainer"
+    if(x==3):
+        key = 'Gamification of learning'
+    if(x==4):
+        key = "Understanding the Architectural Design Process"
+    if(x==5):
+        key = "Project Management Simplified"
+    if(x==6):
+        print("Exiting...\n")
+        return
+    found = searchList(courses, key)
+    if(found != -1):
+        print("You've already taken", key, "\nWould you like to take this course again?\n1.  Yes\n2.  No")
+        opt = input("Enter a choice: ")
+        if(opt == "1"):
+            print("You have now completed this training")
+            return
+        else:
+            print("Course cancelled")
+            return
+    print("You have now completed this training")
+    wr.updateUserCourses(db, username, key)
+
+    return
 
 def logIn(db):
     userName = input('Enter Account Name: ')
@@ -307,32 +356,30 @@ def updateEducation(db, username):
 
     wr.insertUserEducation(db, username, entries[counts - 1][1], entries[counts - 1][2], entries[counts - 1][3])
 
-# What is this???
+def job(db, loginInfo):
+    x = 0
+    # Since general has access to accountOptions, our login status can change. We will return our login state
+    returnable = loginInfo
+    while x != 2:
 
-#def job(db, loginInfo):
-#    x = 0
-#    # Since general has access to accountOptions, our login status can change. We will return our login state
-#    returnable = loginInfo
-#    while x != 2:
+        print(io.loadTextFile("job"))
 
-#        print(io.loadTextFile("job"))
-#
-#        option = input("Choose following option or enter 2 to return: ")
-#        try:
-#            x = int(option)
-#        except ValueError:
-#            print("\n\nERROR: Please enter a valid numeric input.\n\n")
-#            x = -1
-#            continue
-#        if (x == 1):
-#            #postJob
-#            postJob(db, loginInfo[1])
-#            continue 
-#        elif (x == 2):
-#            print("Returning.")
-#        else:
-#            print("Please choose a valid option.")
-#    return returnable
+        option = input("Choose following option or enter 2 to return: ")
+        try:
+            x = int(option)
+        except ValueError:
+            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+            x = -1
+            continue
+        if (x == 1):
+            #postJob
+            postJob(db, loginInfo[1])
+            continue 
+        elif (x == 2):
+            print("Returning.")
+        else:
+            print("Please choose a valid option.")
+    return returnable
 
 def updateUserProfile(db, loginInfo):
     x = 0
@@ -451,7 +498,6 @@ def language(db, loginInfo):
     input('Press enter to continue')
     return x
 
-
 def guestControl(db, loginInfo):
     x = 0
     if not loginInfo[0]:
@@ -480,123 +526,6 @@ def guestControl(db, loginInfo):
                 print('Please enter a valid number')
 
 
-def training(db, loginInfo):
-    x = 0
-    # training option menu
-    returnable = loginInfo
-    while x != 5:
-
-        print(io.loadTextFile("Training"))
-
-        option = input("Choose which section of your profile you would like to update or enter 5 to return: ")
-        try:
-            x = int(option)
-        except ValueError:
-            print("\n\nERROR: Please enter a valid numeric input.\n\n")
-            x = -1
-            continue
-        if (x == 1):
-            # training and education
-            trainEducation(db, loginInfo)
-            continue
-        elif (x == 2):
-            # IT help desk
-            print('Coming Soon!')
-            continue
-        elif (x == 3):
-            # business analysis and strategy
-            returnable = businessAnalysis(db, loginInfo)
-            continue
-        elif (x == 4):
-            # security
-            print('Coming Soon!')
-            continue
-        elif (x == 5):
-            # Exit
-            print("Returning.")
-        else:
-            print("Please choose a valid option.")
-    return returnable
-
-
-def trainEducation(db, loginInfo):
-    x = 0
-    # training option menu
-    returnable = loginInfo
-    while x != 5:
-
-        print(io.loadTextFile("TrainAndEducation"))
-
-        option = input("Choose which section of your profile you would like to update or enter 5 to return: ")
-        try:
-            x = int(option)
-        except ValueError:
-            print("\n\nERROR: Please enter a valid numeric input.\n\n")
-            x = -1
-            continue
-        if (x == 1):
-            # training and education
-            print('Under Construction')
-            continue
-        elif (x == 2):
-            # IT help desk
-            print('Under Construction')
-            continue
-        elif (x == 3):
-            # business analysis and strategy
-            print('Under Construction')
-            continue
-        elif (x == 4):
-            # security
-            print('Under Construction')
-            continue
-        elif (x == 5):
-            # Exit
-            print("Returning.")
-        else:
-            print("Please choose a valid option.")
-    return returnable
-
-
-def businessAnalysis(db, loginInfo):
-    x = 0
-    # training option menu
-    returnable = loginInfo
-    while x != 5:
-
-        print(io.loadTextFile("TrendingCourses"))
-
-        option = input("Choose which section of your profile you would like to update or enter 5 to return: ")
-        try:
-            x = int(option)
-        except ValueError:
-            print("\n\nERROR: Please enter a valid numeric input.\n\n")
-            x = -1
-            continue
-        if (x == 1):
-            # training and education
-            returnable = accountOptions(db, loginInfo)
-            continue
-        elif (x == 2):
-            # IT help desk
-            returnable = accountOptions(db, loginInfo)
-            continue
-        elif (x == 3):
-            # business analysis and strategy
-            returnable = accountOptions(db, loginInfo)
-            continue
-        elif (x == 4):
-            # security
-            returnable = accountOptions(db, loginInfo)
-            continue
-        elif (x == 5):
-            # Exit
-            print("Returning.")
-        else:
-            print("Please choose a valid option.")
-    return returnable
-
-
 def mainMenu(db):
     global currentLan
     # User option value
@@ -613,35 +542,27 @@ def mainMenu(db):
 
         if isLoggedIn:
             # notifications
-            print("Checking to see if you have any new friend requests!")
-            fd.pendingRequests(db, userName)
-            print('\n')
-            print("Checking for new messages!")
-            nt.getNewMessages(db, userName)
-            print('\n')
+            #notif.getNotifications(db, isLoggedIn, userName)
             # Check for deleted job
-            jb.isDeleted(db, userName)
+            #jb.isDeleted(db, userName)
             # Check for new jobs
-            jb.isNewJob(db, userName)
+            #jb.isNewJob(db, userName)
             # Check for recently applied jobs
-            jb.hasAppliedRecently(db, userName)
+            #jb.hasAppliedRecently(db, userName)
 
-            currentLan = rd.currentLanguage(db, userName)
-            if currentLan not in languageDict:
-                currentLan = 1
-                wr.changeLanguage(db, userName, 1)
-
-        if not isLoggedIn:
+            #currentLan = rd.currentLanguage(db, userName)
+            #if currentLan not in languageDict:
+            #    currentLan = 1
+            #    wr.changeLanguage(db, userName, 1)
+            print('----- Currently logged in as', userName, '-----')
+            #print(f"Current language is {languageDict[currentLan]}")
+            print()
+            print(io.loadTextFile("MainMenuLoggedIn"))
+        else :
             currentLan = 1
             print('+-+-+  "I became a quadrillionaire thanks to inCollege!" -Madison +-+-+')
             print(f"Current language is {languageDict[currentLan]}")
             print('0. Watch video about inCollege')
-            print()
-            print(io.loadTextFile("MainMenu"))
-
-        else:
-            print('----- Currently logged in as', userName, '-----')
-            print(f"Current language is {languageDict[currentLan]}")
             print()
             print(io.loadTextFile("MainMenu"))
 
@@ -654,12 +575,15 @@ def mainMenu(db):
             print("\n\nERROR: Please enter a valid numeric input.\n\n")
             x = -1
             continue
-
+        
         if (x == 0):
             print()
             print("Video is now playing")
             print()
-
+        elif(x == -10):
+            print("Entering developer mode")
+            isLoggedIn = 1
+            username = "EthanW"
         elif (x == 1):
             # General
             returned = general(db, (isLoggedIn, userName))
@@ -726,17 +650,13 @@ def mainMenu(db):
            #Job Search/Internship
              
             if isLoggedIn:
-                
-                jb.jobSearch(db, isLoggedIn, userName)
-
-                # What is this???
-                # returned = job(db, (isLoggedIn, userName))
-                # isLoggedIn = returned[0]
-                # userName = returned[1]
-                # print(returned)
+                returned = job(db, (isLoggedIn, userName))
+                isLoggedIn = returned[0]
+                userName = returned[1]
+                print(returned)
             else:
-                print("User must be logged in!")
-                input("please press anything to continue.")
+                print("User must be logged in")
+                input("please press enter to continue")
             continue
 
         elif (x == 9):
@@ -780,59 +700,56 @@ def mainMenu(db):
                 input("please press enter to continue")
             continue
         elif (x == 10):
-            # training
-            training(db, (isLoggedIn, userName))
-            continue
-
-
-        elif (x == 11):
             # copyright notice
             continue
 
-        elif (x == 12):
+        elif (x == 11):
             # About
             about()
             continue
 
-        elif (x == 13):
+        elif (x == 12):
             # Accessibility
             continue
         
-        elif (x == 14):
+        elif (x == 13):
             # User Agreement
             continue
         
-        elif (x == 15):
+        elif (x == 14):
             # Privacy
             fileName = "resources\PrivacyPolicy.txt"
             openFile(fileName)
             guestControl(db, (isLoggedIn, userName))
             continue
         
-        elif (x == 16):
+        elif (x == 15):
             # Cookie Policy
             fileName = "resources\CookiesPolicy.txt"
             openFile(fileName)
             continue
         
-        elif (x == 17):
+        elif (x == 16):
             # Copyright Policy
             fileName = "resources\CopyRightPolicy.txt"
             openFile(fileName)
             continue
         
-        elif (x == 18):
+        elif (x == 17):
             # Brand Policy
             continue
         
-        elif (x == 19):
+        elif (x == 18):
             # Guest Controls
             guestControl(db, (isLoggedIn, userName))
             continue
         
-        elif (x == 20):
+        elif (x == 19):
             # Language
             currentLan = language(db, (isLoggedIn, userName))
+            continue
+        elif(x == 20):
+            inCollegeLearning(db, userName)
             continue
 
                

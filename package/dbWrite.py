@@ -2,6 +2,11 @@ from package import dbRead as rd
 from package import userIO as io
 from datetime import datetime as dt
 
+def updateUserCourses(db, username, course):
+    db[0].execute("INSERT INTO learning VALUES (?, ?)", (username, course))
+    db[1].commit()
+    return
+
 def updateUserLogin(db, username):
     db[0].execute("UPDATE users SET lastLogin = (?) WHERE username = (?)", dt.now(), username)
     db[1].commit()
