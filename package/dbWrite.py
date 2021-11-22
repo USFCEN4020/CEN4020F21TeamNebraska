@@ -1,9 +1,16 @@
 from package import dbRead as rd
 from package import userIO as io
+from package import fileAPI as API
 from datetime import datetime as dt
 
+def updateUserCourses(db, username, course):
+    db[0].execute("INSERT INTO learning VALUES (?, ?)", (username, course))
+    db[1].commit()
+    API.printTraining()
+    return
+
 def updateUserLogin(db, username):
-    db[0].execute("UPDATE users SET lastLogin = (?) WHERE username = (?)", dt.now(), username)
+    db[0].execute("UPDATE users SET lastLogin = (?) WHERE username = (?)", (dt.now(), username,))
     db[1].commit()
     return
 
@@ -22,6 +29,8 @@ def insertUser(db, username, password, fname, lname, lan, tier, now):
         db[0].execute("INSERT INTO userFunction VALUES (?,?,?,?)",(username, True, True, True))
         db[0].execute("INSERT INTO userProfile VALUES (?,?,?,?,?)",(username, True, True, True, True))
         db[1].commit()
+        API.printProfiles(db)
+        API.printUsers(db)
         print('User added to database!')
         # 1 => true on success
         return 1
@@ -30,6 +39,9 @@ def insertUser(db, username, password, fname, lname, lan, tier, now):
         # 0 => false on failure
         return 0
 
+def insertJobs(db, username, title , description, employer, location, salary, now):
+    db[0].execute('INSERT INTO jobs VALUES (?,?,?,?,?,?,?)', (username, title, description, employer, location, salary, now))
+    db[1].commit()
 
 def changeLanguage(db, userName, lan):
     db[0].execute('UPDATE users SET lan=? WHERE username=?',(lan, userName))
@@ -47,21 +59,25 @@ def insertUserTitle(db, userName, title):
     db[0].execute('UPDATE userProfile SET title=? WHERE username=?',(title, userName))
     db[1].commit()
     print("Profile title has been added")
+    API.printProfiles(db)
 
 def insertUserMajor(db, userName, major):
     db[0].execute('UPDATE userProfile SET major=? WHERE username=?',(major, userName))
     db[1].commit()
     print("Profile major has been added")
+    API.printProfiles(db)
 
 def insertUserSchoolName(db, userName, schoolname):
     db[0].execute('UPDATE userProfile SET schoolname=? WHERE username=?',(schoolname, userName))
     db[1].commit()
     print("School name has been added")
+    API.printProfiles(db)
 
 def insertUserBio(db, userName, Bio):
     db[0].execute('UPDATE userProfile SET Bio=? WHERE username=?',(Bio, userName))
     db[1].commit() 
-    print("Bio has been added")  
+    print("Bio has been added")
+    API.printProfiles(db)  
 
 def insertUserExperience(db, userName, employer, startdate, enddate, location, description, counts = 0):
     count = 1
@@ -82,6 +98,7 @@ def insertUserExperience(db, userName, employer, startdate, enddate, location, d
                       (employer, startdate, enddate, location, description, userName, counts))
         db[1].commit()
         print("Experience has been modified")
+    API.printProfiles(db)
 
 def insertUserEducation(db, userName, schoolname, degree, years_attended, counts = 0):
     count = 1
@@ -102,3 +119,4 @@ def insertUserEducation(db, userName, schoolname, degree, years_attended, counts
                       (schoolname, degree, years_attended, userName, counts))
         db[1].commit()
         print("Experience has been modified")
+    API.printProfiles(db)

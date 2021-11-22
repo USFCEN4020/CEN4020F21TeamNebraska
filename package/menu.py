@@ -7,15 +7,64 @@ from package import job as jb
 from package import tier as tr
 from package import message as ms
 from package import notify as nt
+from package import notifications as notif
 from datetime import datetime as dt
 
-mainTerm = 20 
+mainTerm = 21
 isLoggedIn = 0
 currentLan = 1
 languageDict = {1: 'English',
                 2: 'Spanish'
                 }
 
+def searchList(list, key):
+    i = 0
+    for i in range(len(list)):
+        if(list[i]==key):
+            return i
+    return -1
+
+def inCollegeLearning(db, username):
+    x = -1
+    key=""
+    print(io.loadTextFile("inCollegeLearning"))
+    print()
+    courses = rd.getCourses(db, username)
+    while(x == -1):
+        option = input("Choose from available options: ")
+        try:
+            x = int(option)
+        except ValueError:
+            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+            x = -1
+            continue
+    if(x == 1):
+        key = "How to use inCollegeLearning"
+    if(x==2):
+        key = "Train the Trainer"
+    if(x==3):
+        key = 'Gamification of learning'
+    if(x==4):
+        key = "Understanding the Architectural Design Process"
+    if(x==5):
+        key = "Project Management Simplified"
+    if(x==6):
+        print("Exiting...\n")
+        return
+    found = searchList(courses, key)
+    if(found != -1):
+        print("You've already taken", key, "\nWould you like to take this course again?\n1.  Yes\n2.  No")
+        opt = input("Enter a choice: ")
+        if(opt == "1"):
+            print("You have now completed this training")
+            return
+        else:
+            print("Course cancelled")
+            return
+    print("You have now completed this training")
+    wr.updateUserCourses(db, username, key)
+
+    return
 
 def logIn(db):
     userName = input('Enter Account Name: ')
@@ -307,30 +356,32 @@ def updateEducation(db, username):
 
     wr.insertUserEducation(db, username, entries[counts - 1][1], entries[counts - 1][2], entries[counts - 1][3])
 
-def job(db, loginInfo):
-    x = 0
-    # Since general has access to accountOptions, our login status can change. We will return our login state
-    returnable = loginInfo
-    while x != 2:
+# What is this???
 
-        print(io.loadTextFile("job"))
+#def job(db, loginInfo):
+#    x = 0
+#    # Since general has access to accountOptions, our login status can change. We will return our login state
+#    returnable = loginInfo
+#    while x != 2:
 
-        option = input("Choose following option or enter 2 to return: ")
-        try:
-            x = int(option)
-        except ValueError:
-            print("\n\nERROR: Please enter a valid numeric input.\n\n")
-            x = -1
-            continue
-        if (x == 1):
-            #postJob
-            postJob(db, loginInfo[1])
-            continue 
-        elif (x == 2):
-            print("Returning.")
-        else:
-            print("Please choose a valid option.")
-    return returnable
+#        print(io.loadTextFile("job"))
+#
+#        option = input("Choose following option or enter 2 to return: ")
+#        try:
+#            x = int(option)
+#        except ValueError:
+#            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+#            x = -1
+#            continue
+#        if (x == 1):
+#            #postJob
+#            postJob(db, loginInfo[1])
+#            continue 
+#        elif (x == 2):
+#            print("Returning.")
+#        else:
+#            print("Please choose a valid option.")
+#    return returnable
 
 def updateUserProfile(db, loginInfo):
     x = 0
@@ -478,6 +529,123 @@ def guestControl(db, loginInfo):
                 print('Please enter a valid number')
 
 
+def training(db, loginInfo):
+    x = 0
+    # training option menu
+    returnable = loginInfo
+    while x != 5:
+
+        print(io.loadTextFile("Training"))
+
+        option = input("Choose which section of your profile you would like to update or enter 5 to return: ")
+        try:
+            x = int(option)
+        except ValueError:
+            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+            x = -1
+            continue
+        if (x == 1):
+            # training and education
+            trainEducation(db, loginInfo)
+            continue
+        elif (x == 2):
+            # IT help desk
+            print('Coming Soon!')
+            continue
+        elif (x == 3):
+            # business analysis and strategy
+            returnable = businessAnalysis(db, loginInfo)
+            continue
+        elif (x == 4):
+            # security
+            print('Coming Soon!')
+            continue
+        elif (x == 5):
+            # Exit
+            print("Returning.")
+        else:
+            print("Please choose a valid option.")
+    return returnable
+
+
+def trainEducation(db, loginInfo):
+    x = 0
+    # training option menu
+    returnable = loginInfo
+    while x != 5:
+
+        print(io.loadTextFile("TrainAndEducation"))
+
+        option = input("Choose which section of your profile you would like to update or enter 5 to return: ")
+        try:
+            x = int(option)
+        except ValueError:
+            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+            x = -1
+            continue
+        if (x == 1):
+            # training and education
+            print('Under Construction')
+            continue
+        elif (x == 2):
+            # IT help desk
+            print('Under Construction')
+            continue
+        elif (x == 3):
+            # business analysis and strategy
+            print('Under Construction')
+            continue
+        elif (x == 4):
+            # security
+            print('Under Construction')
+            continue
+        elif (x == 5):
+            # Exit
+            print("Returning.")
+        else:
+            print("Please choose a valid option.")
+    return returnable
+
+
+def businessAnalysis(db, loginInfo):
+    x = 0
+    # training option menu
+    returnable = loginInfo
+    while x != 5:
+
+        print(io.loadTextFile("TrendingCourses"))
+
+        option = input("Choose which section of your profile you would like to update or enter 5 to return: ")
+        try:
+            x = int(option)
+        except ValueError:
+            print("\n\nERROR: Please enter a valid numeric input.\n\n")
+            x = -1
+            continue
+        if (x == 1):
+            # training and education
+            returnable = accountOptions(db, loginInfo)
+            continue
+        elif (x == 2):
+            # IT help desk
+            returnable = accountOptions(db, loginInfo)
+            continue
+        elif (x == 3):
+            # business analysis and strategy
+            returnable = accountOptions(db, loginInfo)
+            continue
+        elif (x == 4):
+            # security
+            returnable = accountOptions(db, loginInfo)
+            continue
+        elif (x == 5):
+            # Exit
+            print("Returning.")
+        else:
+            print("Please choose a valid option.")
+    return returnable
+
+
 def mainMenu(db):
     global currentLan
     # User option value
@@ -503,9 +671,9 @@ def mainMenu(db):
             # Check for deleted job
             jb.isDeleted(db, userName)
             # Check for new jobs
-            jb.isNewJob(db, userName)
+            #jb.isNewJob(db, userName) # not working
             # Check for recently applied jobs
-            jb.hasAppliedRecently(db, userName)
+            #jb.hasAppliedRecently(db, userName)
 
             currentLan = rd.currentLanguage(db, userName)
             if currentLan not in languageDict:
@@ -607,13 +775,17 @@ def mainMenu(db):
            #Job Search/Internship
              
             if isLoggedIn:
-                returned = job(db, (isLoggedIn, userName))
-                isLoggedIn = returned[0]
-                userName = returned[1]
-                print(returned)
+                
+                jb.jobSearch(db, isLoggedIn, userName)
+
+                # What is this???
+                # returned = job(db, (isLoggedIn, userName))
+                # isLoggedIn = returned[0]
+                # userName = returned[1]
+                # print(returned)
             else:
-                print("User must be logged in")
-                input("please press enter to continue")
+                print("User must be logged in!")
+                input("please press anything to continue.")
             continue
 
         elif (x == 9):
@@ -657,61 +829,64 @@ def mainMenu(db):
                 input("please press enter to continue")
             continue
         elif (x == 10):
+            # training
+            training(db, (isLoggedIn, userName))
+            continue
+
+
+        elif (x == 11):
             # copyright notice
             continue
 
-        elif (x == 11):
+        elif (x == 12):
             # About
             about()
             continue
 
-        elif (x == 12):
+        elif (x == 13):
             # Accessibility
             continue
         
-        elif (x == 13):
+        elif (x == 14):
             # User Agreement
             continue
         
-        elif (x == 14):
+        elif (x == 15):
             # Privacy
             fileName = "resources\PrivacyPolicy.txt"
             openFile(fileName)
             guestControl(db, (isLoggedIn, userName))
             continue
         
-        elif (x == 15):
+        elif (x == 16):
             # Cookie Policy
             fileName = "resources\CookiesPolicy.txt"
             openFile(fileName)
             continue
         
-        elif (x == 16):
+        elif (x == 17):
             # Copyright Policy
             fileName = "resources\CopyRightPolicy.txt"
             openFile(fileName)
             continue
         
-        elif (x == 17):
+        elif (x == 18):
             # Brand Policy
             continue
-        
-        elif (x == 18):
-            # Guest Controls
-            guestControl(db, (isLoggedIn, userName))
-            continue
-        
         elif (x == 19):
             # Language
             currentLan = language(db, (isLoggedIn, userName))
             continue
+        elif (x == 20):
+            inCollegeLearning(db, userName)
+            continue
 
-               
+
         elif (option == str(mainTerm)):
             x = mainTerm
             print("Exit!")
             # this is will exit the program
-          
+
         else:
             print("Invalid input. Please try again.\n")
 
